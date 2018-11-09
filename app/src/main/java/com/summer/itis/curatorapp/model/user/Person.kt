@@ -27,7 +27,7 @@ abstract class Person: Identified {
     @Transient
     var themes: MutableList<Theme> = ArrayList()
 
-    fun printFullName(): String {
+    fun getFullName(): String {
         return "$lastname $name $patronymic"
     }
 }

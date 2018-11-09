@@ -120,7 +120,7 @@ abstract class BaseActivity<Presenter: BasePresenter<*>> : MvpAppCompatActivity(
         toolbar.setNavigationOnClickListener { v -> onBackPressed() }
     }
 
-    override fun setToolbar(toolbar: Toolbar) {
+    override fun setToolbar(toolbar: Toolbar?) {
         setSupportActionBar(toolbar)
     }
 

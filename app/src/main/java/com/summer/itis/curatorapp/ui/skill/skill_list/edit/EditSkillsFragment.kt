@@ -1,7 +1,6 @@
 package com.summer.itis.curatorapp.ui.skill.skill_list.edit
 
 import android.app.Activity
-import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -11,22 +10,16 @@ import android.util.Log
 import android.view.*
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.curatorapp.R
-import com.summer.itis.curatorapp.R.string.skills
 import com.summer.itis.curatorapp.model.skill.Skill
 import com.summer.itis.curatorapp.model.user.Curator
-import com.summer.itis.curatorapp.repository.RepositoryProvider.Companion.curatorRepository
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
+import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.SHOW_PROFILE
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
-import com.summer.itis.curatorapp.ui.skill.skill_list.edit.EditSkillsFragment.Companion.ADD_SKILL
 import com.summer.itis.curatorapp.ui.skill.skill_list.edit.add_skill.AddSkillFragment
-import com.summer.itis.curatorapp.ui.skill.skill_list.view.SkillListFragment
 import com.summer.itis.curatorapp.ui.skill.skill_list.view.SkillListFragment.Companion.EDIT_SKILLS
-import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemeFragment.Companion.ADD_SUBJECT
 import com.summer.itis.curatorapp.utils.AppHelper
-import com.summer.itis.curatorapp.utils.Const
 import com.summer.itis.curatorapp.utils.Const.OWNER_TYPE
 import com.summer.itis.curatorapp.utils.Const.SKILL_KEY
-import com.summer.itis.curatorapp.utils.Const.SUBJECT_KEY
 import com.summer.itis.curatorapp.utils.Const.TAG_LOG
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
 import io.reactivex.disposables.Disposable
@@ -188,14 +181,14 @@ class EditSkillsFragment : BaseFragment<EditSkillsPresenter>(), EditSkillsView, 
         val intent = Intent()
         intent.putExtra(SKILL_KEY, listJson)
         targetFragment?.onActivityResult(EDIT_SKILLS, Activity.RESULT_OK, intent)
-        mainListener.hideFragment(this)
+        mainListener.hideFragment()
 //        backFragment()
     }
 
     private fun addSkill() {
         val fragment = AddSkillFragment.newInstance(mainListener)
         fragment.setTargetFragment(this, ADD_SKILL)
-        mainListener.showFragment(this, fragment)
+        mainListener.showFragment(SHOW_PROFILE, this, fragment)
     }
 
    /* override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

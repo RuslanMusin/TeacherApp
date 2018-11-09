@@ -16,6 +16,7 @@ import com.summer.itis.curatorapp.R
 import com.summer.itis.curatorapp.model.theme.SuggestionTheme
 import com.summer.itis.curatorapp.model.theme.ThemeProgress
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
+import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.SHOW_THEMES
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.TAB_PROFILE
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.TAB_THEMES
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
@@ -170,7 +171,7 @@ class SuggestionFragment : CommentFragment<SuggestionPresenter>(), SuggestionVie
         args.putString(TYPE, SUGGESTION_TYPE)
         val fragment = AddThemeFragment.newInstance(args, mainListener)
         fragment.setTargetFragment(this, EDIT_SUGGESTION)
-        mainListener.showFragment(this, fragment)
+        mainListener.showFragment(SHOW_THEMES, this, fragment)
     }
 
     private fun showStudent() {

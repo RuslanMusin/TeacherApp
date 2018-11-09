@@ -4,35 +4,23 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.curatorapp.R
-import com.summer.itis.curatorapp.R.drawable.item
-import com.summer.itis.curatorapp.R.id.*
-import com.summer.itis.curatorapp.model.user.Curator
 import com.summer.itis.curatorapp.model.user.Student
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
-import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.TAB_PROFILE
-import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.TAB_STUDENTS
+import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.SHOW_THEMES
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
 import com.summer.itis.curatorapp.ui.curator.curator_item.description.view.DescriptionFragment
-import com.summer.itis.curatorapp.ui.curator.curator_item.edit.EditCuratorFragment
-import com.summer.itis.curatorapp.ui.curator.curator_item.view.CuratorFragment
-import com.summer.itis.curatorapp.ui.curator.curator_item.view.CuratorPresenter
-import com.summer.itis.curatorapp.ui.curator.curator_item.view.CuratorView
-import com.summer.itis.curatorapp.ui.login.LoginActivity
 import com.summer.itis.curatorapp.ui.skill.skill_list.view.SkillListFragment
 import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemeFragment
 import com.summer.itis.curatorapp.ui.work.one_work_list.WorkListFragment
 import com.summer.itis.curatorapp.utils.AppHelper
 import com.summer.itis.curatorapp.utils.Const
 import com.summer.itis.curatorapp.utils.Const.DESC_KEY
-import com.summer.itis.curatorapp.utils.Const.ID_KEY
 import com.summer.itis.curatorapp.utils.Const.MAX_LENGTH
-import com.summer.itis.curatorapp.utils.Const.OWNER_TYPE
 import com.summer.itis.curatorapp.utils.Const.STUDENT_TYPE
 import com.summer.itis.curatorapp.utils.Const.TYPE
 import com.summer.itis.curatorapp.utils.Const.USER_ID
@@ -140,26 +128,34 @@ class StudentFragment : BaseFragment<StudentPresenter>(), StudentView, View.OnCl
         args.putString(DESC_KEY, user.description)
         args.putString(TYPE, STUDENT_TYPE)
         val fragment = DescriptionFragment.newInstance(args, mainListener)
-        mainListener.pushFragments(TAB_STUDENTS, fragment, true)
-//        mainListener.loadFragment(DescriptionFragment.newInstance(argUser(user, STUDENT_TYPE), mainListener))
+        mainListener.showFragment(SHOW_THEMES, this, fragment)
+//        mainListener.pushFragments(TAB_STUDENTS, fragment, true)
     }
 
     private fun giveTheme() {
-        val args = Bundle()
+      /*  val args = Bundle()
         args.putString(ID_KEY, user.id)
         val fragment = AddThemeFragment.newInstance(args, mainListener)
-        mainListener.pushFragments(TAB_STUDENTS, fragment, true)
+        mainListener.pushFragments(TAB_STUDENTS, fragment, true)*/
+        val args = Intent()
+        val studentJson = gsonConverter.toJson(user)
+        args.putExtra(USER_KEY, studentJson)
+        targetFragment?.onActivityResult(AddThemeFragment.ADD_STUDENT, Activity.RESULT_OK, args)
+        mainListener.hideFragment()
     }
 
     private fun showSkills() {
         val fragment = SkillListFragment.newInstance(argUser(user, STUDENT_TYPE), mainListener)
-        mainListener.pushFragments(TAB_STUDENTS, fragment, true)
-//        mainListener.loadFragment(SkillListFragment.newInstance(argUser(user, STUDENT_TYPE), mainListener))
+        mainListener.showFragment(SHOW_THEMES, this, fragment)
+//        mainListener.pushFragments(TAB_STUDENTS, fragment, true)
     }
 
     private fun showWorks() {
         val fragment = WorkListFragment.newInstance(argUser(user, STUDENT_TYPE), mainListener)
-        mainListener.pushFragments(TAB_STUDENTS, fragment, true)
-//        mainListener.loadFragment(WorkListFragment.newInstance(argUser(user, STUDENT_TYPE), mainListener))
+        mainListener.showFragment(SHOW_THEMES, this, fragment)
+
+//        mainListener.pushFragments(TAB_STUDENTS, fragment, true)
     }
+
+
 }

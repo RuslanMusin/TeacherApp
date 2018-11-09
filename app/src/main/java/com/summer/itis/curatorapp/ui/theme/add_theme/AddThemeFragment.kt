@@ -13,8 +13,11 @@ import com.summer.itis.curatorapp.R
 import com.summer.itis.curatorapp.model.skill.Subject
 import com.summer.itis.curatorapp.model.theme.SuggestionTheme
 import com.summer.itis.curatorapp.model.theme.Theme
+import com.summer.itis.curatorapp.model.user.Student
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
+import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.SHOW_THEMES
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
+import com.summer.itis.curatorapp.ui.student.student_list.StudentListFragment
 import com.summer.itis.curatorapp.ui.subject.add_subject.AddSubjectFragment
 import com.summer.itis.curatorapp.utils.AppHelper
 import com.summer.itis.curatorapp.utils.Const.ADD_THEME_TYPE
@@ -24,8 +27,8 @@ import com.summer.itis.curatorapp.utils.Const.SUBJECT_KEY
 import com.summer.itis.curatorapp.utils.Const.SUGGESTION_TYPE
 import com.summer.itis.curatorapp.utils.Const.TAG_LOG
 import com.summer.itis.curatorapp.utils.Const.THEME_KEY
-import com.summer.itis.curatorapp.utils.Const.THEME_TYPE
 import com.summer.itis.curatorapp.utils.Const.TYPE
+import com.summer.itis.curatorapp.utils.Const.USER_KEY
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_add_theme.*
 import kotlinx.android.synthetic.main.toolbar_add.*
@@ -42,6 +45,7 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
 
     private var studentId: String? = null
     private var subject: Subject? = null
+    private var student: Student? = null
 
     @InjectPresenter
     lateinit var presenter: AddThemePresenter
@@ -49,6 +53,7 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
     companion object {
 
         const val ADD_SUBJECT: Int = 1
+        const val ADD_STUDENT: Int = 2
 
         fun newInstance(args: Bundle, mainListener: NavigationView): Fragment {
             val fragment = AddThemeFragment()
@@ -65,7 +70,7 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mainListener.hideBottomNavigation()
+//        mainListener.hideBottomNavigation()
         val view = inflater.inflate(R.layout.fragment_add_theme, container, false)
         return view
     }
@@ -119,6 +124,7 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
     private fun setListeners() {
         btn_create_questions.setOnClickListener(this)
         btn_add_subject.setOnClickListener(this)
+        btn_add_student.setOnClickListener(this)
         btn_back.setOnClickListener(this)
     }
 
@@ -148,10 +154,16 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
             R.id.btn_add_subject -> {
                 val fragment = AddSubjectFragment.newInstance(mainListener)
                 fragment.setTargetFragment(this, ADD_SUBJECT)
-                mainListener.showFragment(this, fragment)
+                mainListener.showFragment(SHOW_THEMES, this, fragment)
 //                mainListener.pushFragments(TAB_STUDENTS, fragment, false)
 //                mainListener.loadFragment(fragment)
 
+            }
+
+            R.id.btn_add_student -> {
+                val fragment = StudentListFragment.newInstance(mainListener)
+                fragment.setTargetFragment(this, ADD_SUBJECT)
+                mainListener.showFragment(SHOW_THEMES, this, fragment)
             }
 
             R.id.btn_back -> backFragment()
@@ -161,7 +173,7 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
     override fun getResultAfterEdit(isEdit: Boolean, intent: Intent?) {
         if(isEdit) {
             targetFragment?.onActivityResult(EDIT_SUGGESTION, Activity.RESULT_OK, intent)
-            mainListener.hideFragment(this)
+            mainListener.hideFragment()
         } else {
             backFragment()
         }
@@ -169,11 +181,24 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
 
-        if (reqCode == ADD_SUBJECT && resultCode == Activity.RESULT_OK) {
-            Log.d(TAG_LOG, "getResult")
-            data?.getStringExtra(SUBJECT_KEY)?.let {
-                subject = gsonConverter.fromJson(it, Subject::class.java)
-                tv_added_subject.text = subject?.name
+        if(resultCode == Activity.RESULT_OK) {
+
+            when(reqCode) {
+
+                ADD_SUBJECT -> {
+                    Log.d(TAG_LOG, "getResult")
+                    data?.getStringExtra(SUBJECT_KEY)?.let {
+                        subject = gsonConverter.fromJson(it, Subject::class.java)
+                        tv_added_subject.text = subject?.name
+                    }
+                }
+
+                ADD_STUDENT -> {
+                    data?.getStringExtra(USER_KEY)?.let {
+                        student = gsonConverter.fromJson(it, Student::class.java)
+                        tv_added_student.text = student?.getFullName()
+                    }
+                }
             }
         }
     }

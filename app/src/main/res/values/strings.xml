@@ -345,4 +345,12 @@
     <string name="edit">Редактирование</string>
     <string name="themes">Темы</string>
     <string name="theme_not_choosed">Тема еще не выбрана</string>
+    <string name="added_student">Выбранный студент</string>
+    <string name="all_students_choosed">Все студенты</string>
+    <string name="add_student">Выбрать студента</string>
+    <string name="choosed_courses">Курс</string>
+    <string name="doesnt_matter">Любой</string>
+    <string name="doesnt_matter_for_all">Любые</string>
+    <string name="add_skill">Добавить компетенцию</string>
+    <string name="skill">Компетенция</string>
 </resources>

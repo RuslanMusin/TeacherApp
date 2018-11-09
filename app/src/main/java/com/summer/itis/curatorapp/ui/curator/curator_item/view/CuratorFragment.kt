@@ -68,8 +68,8 @@ class CuratorFragment : BaseFragment<CuratorPresenter>(), CuratorView, View.OnCl
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initViews(type)
         super.onViewCreated(view, savedInstanceState)
+        initViews(type)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -188,8 +188,8 @@ class CuratorFragment : BaseFragment<CuratorPresenter>(), CuratorView, View.OnCl
 
     private fun showSkills() {
 //        mainListener.loadFragment(SkillListFragment.newInstance(argUser(user), mainListener))
-        val fragment = SkillListFragment.newInstance(argUser(user), mainListener)
-        mainListener.pushFragments(TAB_PROFILE, fragment, true)
+       /* val fragment = SkillListFragment.newInstance(argUser(user), mainListener)
+        mainListener.pushFragments(TAB_PROFILE, fragment, true)*/
 
         /*val intent: Intent = Intent(this,OneTestListActivity::class.java)
         intent.putExtra(TEST_LIST_TYPE, USER_TESTS)

@@ -2,6 +2,7 @@ package com.summer.itis.curatorapp.ui.theme.theme_list.tab_fragment.my_theme_lis
 
 import android.app.Activity
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -204,6 +205,8 @@ class MyThemeListFragment : BaseFragment<MyThemeListPresenter>(), MyThemeListVie
                 val args = Bundle()
                 args.putString(Const.ID_KEY, user.id)
                 val fragment = AddThemeFragment.newInstance(args, mainListener)
+              /*  val tabLayout = parentFragment?.view?.findViewById<TabLayout>(R.id.tab_layout)
+                tabLayout?.visibility = View.GONE*/
                 mainListener.pushFragments(NavigationBaseActivity.TAB_THEMES, fragment, true)            }
         }
     }

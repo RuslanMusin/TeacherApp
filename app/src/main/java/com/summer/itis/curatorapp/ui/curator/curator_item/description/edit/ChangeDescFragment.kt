@@ -107,6 +107,6 @@ class ChangeDescFragment : BaseFragment<ChangeDescPresenter>(), ChangeDescView, 
         presenter.saveDescription(description, type, id)
 //        this.activity?.let { AppHelper.saveCurrentState(user, it) }
 //        backFragment()
-        mainListener.hideFragment(this)
+        mainListener.hideFragment()
     }
 }

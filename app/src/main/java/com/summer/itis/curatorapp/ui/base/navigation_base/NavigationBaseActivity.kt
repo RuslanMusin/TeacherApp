@@ -14,18 +14,17 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import com.arellomobile.mvp.presenter.InjectPresenter
-import com.summer.itis.curatorapp.model.user.Curator
+import com.summer.itis.curatorapp.R.id.bottom_navigation
+import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.TAG_NAVIG_ACT
 import com.summer.itis.curatorapp.ui.curator.curator_item.view.CuratorFragment
 import com.summer.itis.curatorapp.ui.student.student_list.StudentListFragment
 import com.summer.itis.curatorapp.ui.theme.theme_list.ThemeListFragment
 import com.summer.itis.curatorapp.utils.Const.USER_KEY
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.activity_base.*
+import kotlinx.android.synthetic.main.fragment_theme_tabs.*
 import java.util.*
-
-
-
-
+import kotlin.collections.HashMap
 
 
 //АКТИВИТИ РОДИТЕЛЬ ДЛЯ ОСНОВНОЙ НАВИГАЦИИ(БОКОВОЙ). ЮЗАТЬ МЕТОДЫ supportActionBar И setBackArrow(ЕСЛИ НУЖНА СТРЕЛКА НАЗАД)
@@ -35,8 +34,10 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
     override lateinit var presenter: NavigationPresenter
 
     private lateinit var mStacks: HashMap<String, Stack<Fragment>>
+    private lateinit var relativeTabs: HashMap<String, String>
 
     private var mCurrentTab: String? = null
+    private var mShowTab: String? = null
 
     private var editFragment: Fragment? = null
 
@@ -48,7 +49,9 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
         const val TAB_STUDENTS = "tab_students"
         const val TAB_THEMES = "tab_themes"
         const val TAB_WORKS = "tab_works"
-        const val LAST_FRAGMENTS = "last"
+        const val SHOW_PROFILE = "show_profile"
+        const val SHOW_THEMES = "show_theme"
+        const val SHOW_WORKS = "show_works"
 
         fun start(context: Context) {
             val intent = Intent(context, NavigationBaseActivity::class.java)
@@ -67,9 +70,16 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
         mStacks[TAB_STUDENTS] = Stack()
         mStacks[TAB_THEMES] = Stack()
         mStacks[TAB_WORKS] = Stack()
-        mStacks[LAST_FRAGMENTS] = Stack()
+        mStacks[SHOW_PROFILE] = Stack()
+        mStacks[SHOW_THEMES] = Stack()
+        mStacks[SHOW_WORKS] = Stack()
 
-        bottom_navigation.selectedItemId = R.id.action_profile
+        relativeTabs = HashMap()
+        relativeTabs[TAB_PROFILE] = SHOW_PROFILE
+        relativeTabs[TAB_THEMES] = SHOW_THEMES
+        relativeTabs[TAB_WORKS] = SHOW_WORKS
+
+        bottom_navigation.selectedItemId = R.id.action_works
 
      /*   val args: Bundle = Bundle()
         val userJson = gsonConverter.toJson(AppHelper.currentCurator)
@@ -77,18 +87,6 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
         loadFragment(CuratorFragment.newInstance(args, this))*/
        /* val contentFrameLayout = findViewById<FrameLayout>(R.id.container)
         layoutInflater.inflate(getContentLayout(), contentFrameLayout)*/
-    }
-
-    override fun loadFragment(fragment: Fragment) {
-        //switching fragment
-        /*supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.container, fragment)
-                .addToBackStack(null)
-                .commit()*/
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.container, fragment)
-        fragmentTransaction.commit()
     }
 
     override fun supportActionBar(toolbar: Toolbar) {
@@ -111,10 +109,10 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
                                 selectedTab(TAB_PROFILE)
                             }
 
-                            R.id.action_students -> {
+                           /* R.id.action_students -> {
 //                                loadFragment(StudentListFragment.newInstance(this@NavigationBaseActivity))
                                 selectedTab(TAB_STUDENTS)
-                            }
+                            }*/
 
                             R.id.action_themes -> {
                                 selectedTab(TAB_THEMES)
@@ -125,15 +123,11 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
                 })
     }
 
-    private fun gotoFragment(selectedFragment: Fragment) {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.container, selectedFragment)
-        fragmentTransaction.commit()
-    }
-
     private fun selectedTab(tabId: String) {
         mCurrentTab = tabId
+        mShowTab = relativeTabs[tabId]
         val size = mStacks[tabId]?.size
+        setToolbar(null)
         if (size == 0) {
             when(tabId) {
 
@@ -146,35 +140,69 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
                 TAB_WORKS -> showWorks(tabId)
             }
         } else {
-            mStacks[tabId]?.lastElement()?.let { pushFragments(tabId, it, false) }
+            if(mStacks[mShowTab]?.size == 0) {
+                mStacks[tabId]?.lastElement()?.let {
+                    pushFragments(tabId, it, false)
+                }
+            } else {
+                mStacks[mShowTab]?.lastElement()?.let {
+                    val ft = supportFragmentManager.beginTransaction()
+                    ft.replace(R.id.container, it)
+                         ft.commit()
+                }
+            }
         }
     }
 
     override fun pushFragments(tag: String, fragment: Fragment, shouldAdd: Boolean) {
-        showBottomNavigation()
-        if (shouldAdd)
+//        showBottomNavigation()
+        if (shouldAdd) {
             mStacks[tag]?.push(fragment)
+        }
         val manager = supportFragmentManager
+//        hideBottomNavigation()
         val ft = manager.beginTransaction()
         ft.replace(R.id.container, fragment)
         ft.commit()
+//        showBottomNavigation()
     }
 
-    override fun setResultAndBack(args: Bundle) {
-      /*  val manager = supportFragmentManager
-        val ft = manager.beginTransaction()
-        editableFragment?.let {
+    override fun onBackPressed() {
+//        super.onBackPressed()
+//        showBottomNavigation()
+        if(mStacks[mShowTab]?.size != 0) {
+            hideFragment()
+        } else {
+            popCurrentFragment()
+        }
+       /* when(mCurrentTab) {
 
-            ft.replace(R.id.container, it) }
-        ft.commit()*/
+            TAB_THEMES -> popCurrentFragment()
+
+            TAB_PROFILE -> popCurrentFragment()
+
+            TAB_WORKS -> popCurrentFragment()
+
+            SHOW_THEMES -> hideFragment()
+
+            SHOW_PROFILE -> hideFragment()
+
+            SHOW_WORKS -> hideFragment()
+        }*/
+
+        /*if(mStacks[SHOW_PROFILE]?.size != 0) {
+            editFragment?.let { hideFragment() }
+        } else {
+        }*/
     }
 
-    override fun openFragmentForEdit(currentFragment: Fragment, editfragment: Fragment) {
-      /*  this.editableFragment = currentFragment
-        val manager = supportFragmentManager
-        val ft = manager.beginTransaction()
-        ft.replace(R.id.container, editfragment)
-        ft.commit()*/
+    private fun popCurrentFragment() {
+        val size = mStacks.get(mCurrentTab)?.size
+        if(size == 1){
+            finish();
+            return;
+        }
+        popFragments();
     }
 
     fun popFragments() {
@@ -188,20 +216,35 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
         ft.commit()
     }
 
-    override fun onBackPressed() {
-//        super.onBackPressed()
-        showBottomNavigation()
-        val size = mStacks.get(mCurrentTab)?.size
-        if(size == 1){
-            finish();
-            return;
+    override fun hideFragment() {
+        val fragment = mStacks[mShowTab]?.size?.minus(2)?.let { mStacks[mShowTab]?.elementAt(it) }
+
+        val fragmentBefore = mStacks[mShowTab]?.pop()
+        val manager = supportFragmentManager
+        val ft = manager.beginTransaction()
+        fragmentBefore?.let { ft.hide(it).remove(fragmentBefore) }
+        val size = mStacks.get(mShowTab)?.size
+        if(size!! == 1){
+            mStacks[mShowTab]?.pop()
         }
-        if(mStacks[LAST_FRAGMENTS]?.size != 0) {
-            editFragment?.let { hideFragment(it) }
-        } else {
-            popFragments();
-        }
+        fragment?.let { ft.show(it) }
+
+        ft.commit()
     }
+
+    override fun showFragment(tabId: String, lastFragment: Fragment, fragment: Fragment) {
+        if(mStacks[mShowTab]?.size == 0) {
+            mStacks[mShowTab]?.push(lastFragment)
+        }
+        mStacks[mShowTab]?.push(fragment)
+//        editFragment = fragment
+        val manager = supportFragmentManager
+        val ft = manager.beginTransaction()
+        lastFragment.let {ft.hide(it).add(R.id.container, fragment).show(fragment)}
+        ft.commit()
+    }
+
+
 
     private fun showProfile(tabId: String) {
         Log.d(TAG_NAVIG_ACT, "curator start")
@@ -210,9 +253,9 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
         args.putString(USER_KEY, userJson)
         val fragment = CuratorFragment.newInstance(args, this)
         pushFragments(tabId, fragment, true)
-
-//        loadFragment()
     }
+
+
 
     private fun showStudents(tabId: String) {
         val fragment = StudentListFragment.newInstance(this)
@@ -228,22 +271,6 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
 
     }
 
-    override fun showFragment(lastFragment: Fragment, fragment: Fragment) {
-        mStacks[LAST_FRAGMENTS]?.push(lastFragment)
-        editFragment = fragment
-        val manager = supportFragmentManager
-        val ft = manager.beginTransaction()
-        lastFragment.let {ft.hide(it).add(R.id.container, fragment).show(fragment)}
-        ft.commit()
-    }
-
-    override fun hideFragment(fragment: Fragment) {
-        val manager = supportFragmentManager
-        val ft = manager.beginTransaction()
-        mStacks[LAST_FRAGMENTS]?.pop()?.let { ft.hide(fragment).remove(fragment).show(it) }
-        ft.commit()
-    }
-
     override fun hideBottomNavigation() {
         bottom_navigation.visibility = View.GONE
     }
@@ -256,4 +283,11 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
     override fun changeWindowsSoftInputMode(mode: Int) {
         this.window.setSoftInputMode(mode);
     }
+
+    override fun setToolbar(toolbar: Toolbar?) {
+        super.setToolbar(toolbar)
+       /* bottom_navigation.refreshDrawableState()
+        container.refreshDrawableState()*/
+    }
+
 }

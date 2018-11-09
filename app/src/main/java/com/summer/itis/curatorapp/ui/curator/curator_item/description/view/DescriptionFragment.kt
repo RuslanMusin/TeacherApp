@@ -16,6 +16,7 @@ import com.summer.itis.curatorapp.model.user.Student
 import com.summer.itis.curatorapp.repository.RepositoryProvider
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity
+import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.SHOW_PROFILE
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.TAB_PROFILE
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.TAB_STUDENTS
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.TAB_THEMES
@@ -147,7 +148,7 @@ class DescriptionFragment : BaseFragment<DescriptionPresenter>(), DescriptionVie
         id?.let { args.putString(ID_KEY, id) }
         val fragment = ChangeDescFragment.newInstance(args, mainListener)
         fragment.setTargetFragment(this, EDIT_DESC)
-        mainListener.showFragment(this, fragment)
+        mainListener.showFragment(SHOW_PROFILE, this, fragment)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -55,7 +55,7 @@ class AddSubjectFragment : BaseFragment<AddSubjectPresenter>(), AddSubjectView, 
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mainListener.hideBottomNavigation()
+//        mainListener.hideBottomNavigation()
         val view = inflater.inflate(R.layout.fragment_student_list, container, false)
         return view
     }
@@ -125,7 +125,7 @@ class AddSubjectFragment : BaseFragment<AddSubjectPresenter>(), AddSubjectView, 
         intent.putExtra(SUBJECT_KEY, itemJson)
 
         targetFragment?.onActivityResult(ADD_SUBJECT,RESULT_OK, intent)
-        mainListener.hideFragment(this)
+        mainListener.hideFragment()
 //        mainListener.setResultAndBack(args)
     }
 
@@ -133,7 +133,7 @@ class AddSubjectFragment : BaseFragment<AddSubjectPresenter>(), AddSubjectView, 
         when (v.id) {
 
             R.id.btn_back -> {
-                mainListener.hideFragment(this)
+                mainListener.hideFragment()
 //                backFragment()
             }
 

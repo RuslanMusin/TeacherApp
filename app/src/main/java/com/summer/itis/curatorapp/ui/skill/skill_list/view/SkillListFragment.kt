@@ -37,6 +37,8 @@ import com.summer.itis.curatorapp.utils.Const.WATCHER_TYPE
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
 import java.util.regex.Pattern
 import com.google.gson.reflect.TypeToken
+import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.SHOW_PROFILE
+import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.SHOW_THEMES
 import java.util.*
 
 
@@ -204,7 +206,7 @@ class SkillListFragment : BaseFragment<SkillListPresenter>(), SkillListView, Vie
         fragment.setTargetFragment(this, EDIT_SKILLS)
 //        mainListener.loadFragment(fragment)
 //        mainListener.pushFragments(TAB_PROFILE, fragment, true)
-        mainListener.showFragment(this, fragment)
+        mainListener.showFragment(SHOW_PROFILE, this, fragment)
 
     }
 

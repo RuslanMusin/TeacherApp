@@ -156,6 +156,13 @@ class ThemeListFragment : BaseFragment<ThemeListPresenter>(), ThemeListView {
 
     }
 
+    override fun onDestroyView() {
+//        tab_layout.visibility = View.GONE
+        super.onDestroyView()
+
+    }
+
+
    /* private fun findFromList(query: String) {
         val pattern: Pattern = Pattern.compile("${query.toLowerCase()}.*")
         val list: MutableList<Skill> = java.util.ArrayList()

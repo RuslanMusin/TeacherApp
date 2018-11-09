@@ -5,7 +5,7 @@ import android.support.v7.widget.Toolbar
 
 interface BaseActView: BasicFunctional {
 
-    fun setToolbar(toolbar: Toolbar)
+    fun setToolbar(toolbar: Toolbar?)
 
     fun setToolbarTitle(title: String)
 

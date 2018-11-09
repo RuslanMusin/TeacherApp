@@ -10,16 +10,11 @@ import android.support.v7.widget.SearchView
 import android.view.*
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.curatorapp.R
-import com.summer.itis.curatorapp.R.string.level
 import com.summer.itis.curatorapp.model.skill.Skill
 import com.summer.itis.curatorapp.model.user.Curator
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
-import com.summer.itis.curatorapp.ui.skill.skill_list.edit.EditSkillAdapter
-import com.summer.itis.curatorapp.ui.skill.skill_list.edit.EditSkillsFragment
 import com.summer.itis.curatorapp.ui.skill.skill_list.edit.EditSkillsFragment.Companion.ADD_SKILL
-import com.summer.itis.curatorapp.ui.skill.skill_list.edit.EditSkillsPresenter
-import com.summer.itis.curatorapp.ui.skill.skill_list.edit.EditSkillsView
 import com.summer.itis.curatorapp.utils.AppHelper
 import com.summer.itis.curatorapp.utils.Const.OWNER_TYPE
 import com.summer.itis.curatorapp.utils.Const.SKILL_KEY
@@ -164,7 +159,7 @@ class AddSkillFragment : BaseFragment<AddSkillPresenter>(), AddSkillView, View.O
         val skillJson = gsonConverter.toJson(item)
         intent.putExtra(SKILL_KEY, skillJson)
         targetFragment?.onActivityResult(ADD_SKILL, RESULT_OK, intent)
-        mainListener.hideFragment(this)
+        mainListener.hideFragment()
     }
 
     override fun onClick(v: View) {
