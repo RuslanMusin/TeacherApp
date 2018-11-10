@@ -26,9 +26,11 @@ import com.summer.itis.curatorapp.utils.Const.DESC_KEY
 import com.summer.itis.curatorapp.utils.Const.ID_KEY
 import com.summer.itis.curatorapp.utils.Const.MAX_LENGTH
 import com.summer.itis.curatorapp.utils.Const.OWNER_TYPE
+import com.summer.itis.curatorapp.utils.Const.TEST_LIST_TYPE
 import com.summer.itis.curatorapp.utils.Const.TYPE
 import com.summer.itis.curatorapp.utils.Const.USER_ID
 import com.summer.itis.curatorapp.utils.Const.USER_KEY
+import com.summer.itis.curatorapp.utils.Const.USER_TESTS
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.layout_personal.*
 import kotlinx.android.synthetic.main.toolbar_edit.*
@@ -187,14 +189,8 @@ class CuratorFragment : BaseFragment<CuratorPresenter>(), CuratorView, View.OnCl
     }
 
     private fun showSkills() {
-//        mainListener.loadFragment(SkillListFragment.newInstance(argUser(user), mainListener))
-       /* val fragment = SkillListFragment.newInstance(argUser(user), mainListener)
-        mainListener.pushFragments(TAB_PROFILE, fragment, true)*/
-
-        /*val intent: Intent = Intent(this,OneTestListActivity::class.java)
-        intent.putExtra(TEST_LIST_TYPE, USER_TESTS)
-        intent.putExtra(USER_ID,user.id)
-        OneTestListActivity.start(this,intent)*/
+        val fragment = SkillListFragment.newInstance(argUser(user), mainListener)
+        mainListener.pushFragments(TAB_PROFILE, fragment, true)
     }
 
     private fun showWorks() {

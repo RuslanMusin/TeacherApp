@@ -16,11 +16,14 @@ import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
 import com.summer.itis.curatorapp.ui.curator.curator_item.description.view.DescriptionFragment
 import com.summer.itis.curatorapp.ui.skill.skill_list.view.SkillListFragment
 import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemeFragment
+import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemeFragment.Companion.ADD_STUDENT
 import com.summer.itis.curatorapp.ui.work.one_work_list.WorkListFragment
 import com.summer.itis.curatorapp.utils.AppHelper
 import com.summer.itis.curatorapp.utils.Const
 import com.summer.itis.curatorapp.utils.Const.DESC_KEY
 import com.summer.itis.curatorapp.utils.Const.MAX_LENGTH
+import com.summer.itis.curatorapp.utils.Const.REQUEST_CODE
+import com.summer.itis.curatorapp.utils.Const.SEND_THEME
 import com.summer.itis.curatorapp.utils.Const.STUDENT_TYPE
 import com.summer.itis.curatorapp.utils.Const.TYPE
 import com.summer.itis.curatorapp.utils.Const.USER_ID
@@ -36,6 +39,8 @@ class StudentFragment : BaseFragment<StudentPresenter>(), StudentView, View.OnCl
 
     @InjectPresenter
     lateinit var presenter: StudentPresenter
+
+    private var requestNumber = -1
 
     companion object {
 
@@ -71,6 +76,7 @@ class StudentFragment : BaseFragment<StudentPresenter>(), StudentView, View.OnCl
                 presenter.findStudentById(id)
             } else {
                 user = gsonConverter.fromJson(it.getString(USER_KEY), Student::class.java)
+                requestNumber = it.getInt(REQUEST_CODE)
                 initViews()
                 setUserData(user)
             }
@@ -133,14 +139,17 @@ class StudentFragment : BaseFragment<StudentPresenter>(), StudentView, View.OnCl
     }
 
     private fun giveTheme() {
-      /*  val args = Bundle()
-        args.putString(ID_KEY, user.id)
-        val fragment = AddThemeFragment.newInstance(args, mainListener)
-        mainListener.pushFragments(TAB_STUDENTS, fragment, true)*/
+
         val args = Intent()
         val studentJson = gsonConverter.toJson(user)
         args.putExtra(USER_KEY, studentJson)
-        targetFragment?.onActivityResult(AddThemeFragment.ADD_STUDENT, Activity.RESULT_OK, args)
+        when (requestNumber) {
+
+            ADD_STUDENT ->  targetFragment?.onActivityResult(AddThemeFragment.ADD_STUDENT, Activity.RESULT_OK, args)
+
+            SEND_THEME -> targetFragment?.onActivityResult(SEND_THEME, Activity.RESULT_OK, args)
+        }
+
         mainListener.hideFragment()
     }
 

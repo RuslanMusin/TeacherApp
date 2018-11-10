@@ -12,7 +12,7 @@ class SuggestionItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(item: SuggestionTheme) {
         itemView.tv_theme.text = item.themeProgress?.title
-        itemView.tv_subject.text = item.themeProgress?.subject?.name
+        itemView.tv_subject.text = item.theme?.subject?.name
         itemView.tv_curator.text = item.curator?.getFullName()
     }
 

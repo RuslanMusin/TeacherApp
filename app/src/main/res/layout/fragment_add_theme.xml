@@ -66,8 +66,8 @@
             android:id="@+id/btn_add_subject"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
             android:padding="12dp"
             android:background="@color/primary"
             android:textColor="@color/white"
@@ -95,8 +95,8 @@
             android:id="@+id/btn_add_student"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
             android:padding="12dp"
             android:background="@color/primary"
             android:textColor="@color/white"
@@ -109,19 +109,65 @@
             android:textColor="@color/primary_text"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:textSize="@dimen/text.18" />
+            android:textSize="@dimen/text.18"
+            android:layout_marginBottom="8dp"/>
 
-        <TextView
-            android:id="@+id/tv_added_student"
-            android:layout_width="wrap_content"
+        <com.jaredrummler.materialspinner.MaterialSpinner
+            android:id="@+id/spinner_student"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin.small"
-            android:textColor="@color/secondary_text"
-            android:textSize="@dimen/text.16"
-            android:text="@string/all_students_choosed"
-           />
+            />
+
+        <LinearLayout
+            android:id="@+id/li_edit_skills"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/skills"
+                android:textColor="@color/primary_text"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:textSize="@dimen/text.18" />
+
+            <TextView
+                android:id="@+id/tv_added_skills"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin.small"
+                android:textColor="@color/secondary_text"
+                android:textSize="@dimen/text.16"
+                android:text="@string/doesnt_matter_for_all"
+                />
+        </LinearLayout>
 
         <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_add_skill"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/primary"
+            android:textColor="@color/white"
+            android:text="@string/add_skill"/>
+
+
+        <!-- <TextView
+             android:id="@+id/tv_added_student"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="@dimen/margin.small"
+             android:textColor="@color/secondary_text"
+             android:textSize="@dimen/text.16"
+             android:text="@string/all_students_choosed"
+            />-->
+
+        <!--<android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_create_questions"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -130,7 +176,7 @@
             android:padding="12dp"
             android:background="@color/primary"
             android:textColor="@color/white"
-            android:text="@string/create_theme"/>
+            android:text="@string/create_theme"/>-->
 
     </LinearLayout>
 </ScrollView>

@@ -13,6 +13,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.curatorapp.R
+import com.summer.itis.curatorapp.R.string.skills
+import com.summer.itis.curatorapp.R.string.theme
 import com.summer.itis.curatorapp.model.theme.SuggestionTheme
 import com.summer.itis.curatorapp.model.theme.ThemeProgress
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
@@ -24,6 +26,7 @@ import com.summer.itis.curatorapp.ui.comment.CommentFragment
 import com.summer.itis.curatorapp.ui.curator.curator_item.description.view.DescriptionFragment
 import com.summer.itis.curatorapp.ui.student.student_item.StudentFragment
 import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemeFragment
+import com.summer.itis.curatorapp.ui.theme.edit_suggestion.EditSuggestionFragment
 import com.summer.itis.curatorapp.ui.theme.theme_item.ThemeFragment
 import com.summer.itis.curatorapp.ui.theme.theme_item.ThemePresenter
 import com.summer.itis.curatorapp.utils.AppHelper
@@ -38,6 +41,7 @@ import com.summer.itis.curatorapp.utils.Const.THEME_KEY
 import com.summer.itis.curatorapp.utils.Const.TYPE
 import com.summer.itis.curatorapp.utils.Const.USER_ID
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
+import com.summer.itis.curatorapp.utils.SkillViewHelper
 import kotlinx.android.synthetic.main.layout_add_comment.*
 import kotlinx.android.synthetic.main.layout_expandable_text_view.*
 import kotlinx.android.synthetic.main.layout_suggestion.*
@@ -128,10 +132,16 @@ class SuggestionFragment : CommentFragment<SuggestionPresenter>(), SuggestionVie
     }
 
     private fun setData() {
+
+        if(suggestionTheme.theme?.skills?.size == 0) {
+            li_skills.visibility = View.GONE
+        } else {
+            tv_skills.text = this.activity?.let { suggestionTheme.theme?.skills?.let { it1 -> SkillViewHelper.getSkillsText(it1, it) } }
+        }
         tv_title.text = suggestionTheme.themeProgress?.title
         tv_curator.text = suggestionTheme.curator?.name
         tv_student.text = suggestionTheme.student?.name
-        tv_subject.text = suggestionTheme.themeProgress?.subject?.name
+        tv_subject.text = suggestionTheme.theme?.subject?.name
         tv_status.text = suggestionTheme.status
         expand_text_view.text = suggestionTheme.themeProgress?.description
     }
@@ -167,9 +177,8 @@ class SuggestionFragment : CommentFragment<SuggestionPresenter>(), SuggestionVie
 
     private fun editProfile() {
         val args = Bundle()
-        args.putString(THEME_KEY, gsonConverter.toJson(suggestionTheme))
-        args.putString(TYPE, SUGGESTION_TYPE)
-        val fragment = AddThemeFragment.newInstance(args, mainListener)
+        args.putString(THEME_KEY, gsonConverter.toJson(suggestionTheme.themeProgress))
+        val fragment = EditSuggestionFragment.newInstance(args, mainListener)
         fragment.setTargetFragment(this, EDIT_SUGGESTION)
         mainListener.showFragment(SHOW_THEMES, this, fragment)
     }
@@ -251,6 +260,10 @@ class SuggestionFragment : CommentFragment<SuggestionPresenter>(), SuggestionVie
                         tv_subject.text = themeProgress.subject.name
                         tv_title.text = themeProgress.title
                         expand_text_view.text = themeProgress.description
+
+                        suggestionTheme.themeProgress = themeProgress
+
+                        mainListener.showSnackBar(getString(R.string.changes_updated))
                     }
                 }
             }

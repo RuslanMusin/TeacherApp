@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <include layout="@layout/toolbar_add_done"/>
+        <include layout="@layout/toolbar_back_done"/>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -32,43 +32,72 @@
             android:layout_height="wrap_content"
             android:paddingTop="24dp"
             android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            >
+            android:paddingRight="24dp">
 
-            <LinearLayout
-                android:id="@+id/li_choose_course"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/ti_theme_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginBottom="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+                <EditText
+                    android:id="@+id/et_theme_name"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/choosed_courses"
-                    android:textColor="@color/primary_text"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:textSize="@dimen/text.18" />
+                    android:inputType="text"
+                    android:hint="@string/theme_name"/>
+            </android.support.design.widget.TextInputLayout>
 
-                <TextView
-                    android:id="@+id/tv_added_courses"
-                    android:layout_width="wrap_content"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/ti_theme_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+                <EditText
+                    android:id="@+id/et_theme_desc"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin.small"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="@dimen/text.16"
-                    android:text="@string/doesnt_matter"
-                    />
+                    android:inputType="text"
+                    android:hint="@string/test_desc"/>
+            </android.support.design.widget.TextInputLayout>
 
-            </LinearLayout>
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_add_subject"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                android:padding="12dp"
+                android:background="@color/primary"
+                android:textColor="@color/white"
+                android:text="@string/add_subject"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/added_subject"
+                android:textColor="@color/primary_text"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:textSize="@dimen/text.18" />
+
+            <TextView
+                android:id="@+id/tv_added_subject"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin.small"
+                android:textColor="@color/secondary_text"
+                android:textSize="@dimen/text.16"
+                />
 
             <LinearLayout
                 android:id="@+id/li_edit_skills"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginBottom="24dp">
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -95,6 +124,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="12dp"
+                android:layout_marginBottom="16dp"
                 android:background="@color/primary"
                 android:textColor="@color/white"
                 android:text="@string/add_skill"/>

@@ -79,7 +79,7 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
         relativeTabs[TAB_THEMES] = SHOW_THEMES
         relativeTabs[TAB_WORKS] = SHOW_WORKS
 
-        bottom_navigation.selectedItemId = R.id.action_works
+        bottom_navigation.selectedItemId = R.id.action_themes
 
      /*   val args: Bundle = Bundle()
         val userJson = gsonConverter.toJson(AppHelper.currentCurator)
@@ -155,7 +155,7 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
     }
 
     override fun pushFragments(tag: String, fragment: Fragment, shouldAdd: Boolean) {
-//        showBottomNavigation()
+        showBottomNavigation()
         if (shouldAdd) {
             mStacks[tag]?.push(fragment)
         }
@@ -169,7 +169,7 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
 
     override fun onBackPressed() {
 //        super.onBackPressed()
-//        showBottomNavigation()
+        showBottomNavigation()
         if(mStacks[mShowTab]?.size != 0) {
             hideFragment()
         } else {

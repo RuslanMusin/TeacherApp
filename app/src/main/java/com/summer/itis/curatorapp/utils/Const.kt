@@ -14,9 +14,12 @@ object Const {
 
     const val SPACE = " "
 
+
     const val SUBJECT_KEY = "subject"
     const val SKILL_KEY = "skill"
     const val THEME_KEY = "suggestionTheme"
+
+    const val COURSE_KEY = "course_key"
 
     const val DESC_KEY = "desc"
 
@@ -28,6 +31,16 @@ object Const {
     const val THEME_TYPE = "THEME_TYPE"
 
     const val TYPE = "TYPE"
+
+    const val ALL_CHOOSED = "all_choosed"
+    const val ONE_CHOOSED = "one_choosed"
+
+    const val ADD_SKILL = 6
+    const val SEND_THEME = 100
+    const val FILTERS = 101
+
+    const val REQUEST_CODE = "REQUEST_CODE"
+
 
     const val BOT_ID = "6n5OesjRMGN0jFAhP5jG9hxtaRg2"
 

@@ -7,28 +7,36 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.curatorapp.R
 import com.summer.itis.curatorapp.model.theme.Theme
+import com.summer.itis.curatorapp.model.user.Student
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.SHOW_THEMES
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.TAB_THEMES
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
 import com.summer.itis.curatorapp.ui.curator.curator_item.description.view.DescriptionFragment
 import com.summer.itis.curatorapp.ui.student.student_item.StudentFragment
+import com.summer.itis.curatorapp.ui.student.student_list.StudentListFragment
 import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemeFragment
+import com.summer.itis.curatorapp.ui.theme.edit_theme.EditThemeFragment
 import com.summer.itis.curatorapp.utils.AppHelper
 import com.summer.itis.curatorapp.utils.Const.DESC_KEY
 import com.summer.itis.curatorapp.utils.Const.EDIT_SUGGESTION
 import com.summer.itis.curatorapp.utils.Const.ID_KEY
+import com.summer.itis.curatorapp.utils.Const.REQUEST_CODE
+import com.summer.itis.curatorapp.utils.Const.SEND_THEME
 import com.summer.itis.curatorapp.utils.Const.THEME_KEY
 import com.summer.itis.curatorapp.utils.Const.THEME_TYPE
 import com.summer.itis.curatorapp.utils.Const.TYPE
 import com.summer.itis.curatorapp.utils.Const.USER_ID
+import com.summer.itis.curatorapp.utils.Const.USER_KEY
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
+import com.summer.itis.curatorapp.utils.SkillViewHelper
 import kotlinx.android.synthetic.main.layout_expandable_text_view.*
 import kotlinx.android.synthetic.main.layout_theme.*
-import kotlinx.android.synthetic.main.toolbar_edit.*
+import kotlinx.android.synthetic.main.toolbar_back_add_edit.*
 
 class ThemeFragment : BaseFragment<ThemePresenter>(), ThemeView, View.OnClickListener {
 
@@ -64,8 +72,8 @@ class ThemeFragment : BaseFragment<ThemePresenter>(), ThemeView, View.OnClickLis
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initViews()
         super.onViewCreated(view, savedInstanceState)
+        initViews()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,18 +89,22 @@ class ThemeFragment : BaseFragment<ThemePresenter>(), ThemeView, View.OnClickLis
     }
 
     private fun setToolbarData() {
-        mainListener.setToolbar(toolbar_edit)
+        mainListener.setToolbar(toolbar_back_add_edit)
         mainListener.setToolbarTitle(theme.title)
-        btn_back.visibility = View.VISIBLE
-
     }
 
     private fun setListeners() {
         btn_edit.setOnClickListener(this)
         btn_back.setOnClickListener(this)
+        btn_add.setOnClickListener(this)
     }
 
     private fun setData() {
+        if(theme.skills.size == 0) {
+            li_skills.visibility = View.GONE
+        } else {
+            tv_skills.text = this.activity?.let { SkillViewHelper.getSkillsText(theme.skills, it) }
+        }
         tv_title.text = theme.title
         tv_curator.text = theme.curator?.getFullName()
         val name = theme.student?.getFullName()
@@ -112,9 +124,32 @@ class ThemeFragment : BaseFragment<ThemePresenter>(), ThemeView, View.OnClickLis
 
             R.id.btn_edit -> editProfile()
 
+            R.id.btn_add -> sendToStudent()
+
             R.id.li_student -> showStudent()
 
             R.id.li_desc -> showDesc()
+        }
+    }
+
+    private fun sendToStudent() {
+        this.activity?.let {
+            MaterialDialog.Builder(it)
+                    .title(R.string.should_send_theme)
+                    .content(R.string.send_theme_content)
+                    .positiveText(R.string.button_ok)
+                    .negativeText(R.string.cancel)
+                    .onNegative { dialog, which ->
+                        dialog.dismiss()
+                    }
+                    .onPositive { dialog, which ->
+                        val args = Bundle()
+                        args.putInt(REQUEST_CODE, SEND_THEME)
+                        val fragment = StudentListFragment.newInstance(args, mainListener)
+                        fragment.setTargetFragment(this, SEND_THEME)
+                        mainListener.showFragment(SHOW_THEMES,this, fragment)
+                    }
+                    .show()
         }
     }
 
@@ -129,12 +164,26 @@ class ThemeFragment : BaseFragment<ThemePresenter>(), ThemeView, View.OnClickLis
     }
 
     private fun editProfile() {
-        val args = Bundle()
-        args.putString(THEME_KEY, gsonConverter.toJson(theme))
-        args.putString(TYPE, THEME_TYPE)
-        val fragment = AddThemeFragment.newInstance(args, mainListener)
-        fragment.setTargetFragment(this, EDIT_SUGGESTION)
-        mainListener.showFragment(SHOW_THEMES,this, fragment)
+        this.activity?.let {
+            MaterialDialog.Builder(it)
+                    .title(R.string.should_edit_theme)
+                    .content(R.string.theme_suggestions_will_be_deleted)
+                    .positiveText(R.string.agree)
+                    .negativeText(R.string.cancel)
+                    .onNegative { dialog, which ->
+                        dialog.dismiss()
+                    }
+                    .onPositive { dialog, which ->
+                        val args = Bundle()
+                        args.putString(THEME_KEY, gsonConverter.toJson(theme))
+                        args.putString(TYPE, THEME_TYPE)
+                        val fragment = EditThemeFragment.newInstance(args, mainListener)
+                        fragment.setTargetFragment(this, EDIT_SUGGESTION)
+                        mainListener.showFragment(SHOW_THEMES,this, fragment)
+                    }
+                    .show()
+        }
+
     }
 
     private fun showStudent() {
@@ -152,10 +201,30 @@ class ThemeFragment : BaseFragment<ThemePresenter>(), ThemeView, View.OnClickLis
                 EDIT_SUGGESTION -> {
                     val json = data?.getStringExtra(THEME_KEY)
                     json?.let {
-                        val themeProgress = gsonConverter.fromJson(json, Theme::class.java)
-                        tv_subject.text = themeProgress.subject.name
-                        tv_title.text = themeProgress.title
-                        expand_text_view.text = themeProgress.description
+                        theme = gsonConverter.fromJson(json, Theme::class.java)
+                        tv_subject.text = theme.subject.name
+                        tv_title.text = theme.title
+                        expand_text_view.text = theme.description
+
+                        if(theme.skills.size != 0) {
+                            li_skills.visibility = View.VISIBLE
+                            tv_skills.text = this.activity?.let { it1 -> SkillViewHelper.getSkillsText(theme.skills, it1) }
+                        } else {
+                            li_skills.visibility = View.GONE
+                        }
+
+                        mainListener.showSnackBar(getString(R.string.changes_updated))
+
+                    }
+                }
+
+                SEND_THEME -> {
+                    val studentJson = data?.getStringExtra(USER_KEY)
+                    studentJson?.let {
+                        val student = gsonConverter.fromJson(studentJson, Student::class.java)
+                        context?.let { it1 -> presenter.sendSuggestion(theme, student, it1) }
+
+                        mainListener.showSnackBar(getString(R.string.suggestion_was_sended))
                     }
                 }
             }

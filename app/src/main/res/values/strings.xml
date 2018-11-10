@@ -353,4 +353,27 @@
     <string name="doesnt_matter_for_all">Любые</string>
     <string name="add_skill">Добавить компетенцию</string>
     <string name="skill">Компетенция</string>
+    <string name="choose">Выбрать</string>
+    <string name="choose_course">Выберите курсы</string>
+    <string name="status_new">Новая</string>
+    <string name="change_suggestion">Изменение предложения</string>
+    <string name="should_send_theme">Хотите предложить тему?</string>
+    <string name="send_theme_content">При нажатии на OK вам нужно будет выбрать студента, которому вы хотите предложить этут тему</string>
+    <string name="theme_suggestions_will_be_deleted">После редактирования темы все прошлые предложеия по ней будут удалены</string>
+    <string name="should_edit_theme">Хотите внести изменения ?</string>
+    <string name="changes_updated">Изменения успешно сохранены</string>
+    <string name="suggestion_was_sended">Предложение было отправлено</string>
+
+    <string-array name="courses">
+        <item>1 курс</item>
+        <item>2 курс</item>
+        <item>3 курс</item>
+        <item>4 курс</item>
+    </string-array>
+
+    <string-array name="skill_levels">
+        <item>Низкий</item>
+        <item>Средний</item>
+        <item>Высокий</item>
+    </string-array>
 </resources>

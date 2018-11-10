@@ -202,4 +202,17 @@ class AppHelper {
             }
         }
     }
+
+    private fun getListString(list: List<String>): String {
+        var listString: String = ""
+        for((i,item) in list.withIndex()) {
+            listString += item
+            if(i != list.lastIndex) {
+                listString += " , "
+            }
+
+        }
+        listString.removeSuffix(",")
+        return listString
+    }
 }

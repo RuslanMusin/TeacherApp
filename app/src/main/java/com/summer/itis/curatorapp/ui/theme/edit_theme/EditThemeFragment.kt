@@ -1,4 +1,4 @@
-package com.summer.itis.curatorapp.ui.theme.add_theme
+package com.summer.itis.curatorapp.ui.theme.edit_theme
 
 import android.app.Activity
 import android.content.Intent
@@ -11,7 +11,9 @@ import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.google.gson.reflect.TypeToken
 import com.summer.itis.curatorapp.R
-import com.summer.itis.curatorapp.R.string.skills
+import com.summer.itis.curatorapp.R.drawable.student
+import com.summer.itis.curatorapp.R.id.*
+import com.summer.itis.curatorapp.R.string.subject
 import com.summer.itis.curatorapp.model.skill.Skill
 import com.summer.itis.curatorapp.model.skill.Subject
 import com.summer.itis.curatorapp.model.theme.SuggestionTheme
@@ -22,10 +24,13 @@ import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
 import com.summer.itis.curatorapp.ui.student.search.choose_skill_main.ChooseSkillFragment
 import com.summer.itis.curatorapp.ui.student.search.edit_choose_skill.EditChooseLIstFragment
-import com.summer.itis.curatorapp.ui.student.search.search_filter.SearchFilterFragment
 import com.summer.itis.curatorapp.ui.student.search.search_filter.SearchFilterFragment.Companion.EDIT_CHOOSED_SKILLS
 import com.summer.itis.curatorapp.ui.student.student_list.StudentListFragment
 import com.summer.itis.curatorapp.ui.subject.add_subject.AddSubjectFragment
+import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemeFragment
+import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemeFragment.Companion.ADD_STUDENT
+import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemePresenter
+import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemeView
 import com.summer.itis.curatorapp.utils.AppHelper
 import com.summer.itis.curatorapp.utils.Const.ADD_SKILL
 import com.summer.itis.curatorapp.utils.Const.ADD_THEME_TYPE
@@ -38,14 +43,13 @@ import com.summer.itis.curatorapp.utils.Const.SUBJECT_KEY
 import com.summer.itis.curatorapp.utils.Const.SUGGESTION_TYPE
 import com.summer.itis.curatorapp.utils.Const.TAG_LOG
 import com.summer.itis.curatorapp.utils.Const.THEME_KEY
-import com.summer.itis.curatorapp.utils.Const.TYPE
 import com.summer.itis.curatorapp.utils.Const.USER_KEY
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
-import kotlinx.android.synthetic.main.fragment_add_theme.*
-import kotlinx.android.synthetic.main.toolbar_add_done.*
+import kotlinx.android.synthetic.main.fragment_edit_theme.*
+import kotlinx.android.synthetic.main.toolbar_back_done.*
 import java.util.*
 
-class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.OnClickListener {
+class EditThemeFragment : BaseFragment<EditThemePresenter>(), EditThemeView, View.OnClickListener {
 
     private lateinit var theme: Theme
     private var suggestionTheme: SuggestionTheme? = null
@@ -54,14 +58,12 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
 
     override lateinit var mainListener: NavigationView
 
-    private var studentId: String? = null
     private var subject: Subject? = null
-    private var student: Student? = null
 
     private var studentType = ALL_CHOOSED
 
     @InjectPresenter
-    lateinit var presenter: AddThemePresenter
+    lateinit var presenter: EditThemePresenter
 
     private var skills: MutableList<Skill> = ArrayList()
     private var listSkills: MutableList<String> = ArrayList()
@@ -70,94 +72,63 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
     companion object {
 
         const val ADD_SUBJECT: Int = 1
-        const val ADD_STUDENT: Int = 2
 
         fun newInstance(args: Bundle, mainListener: NavigationView): Fragment {
-            val fragment = AddThemeFragment()
+            val fragment = EditThemeFragment()
             fragment.arguments = args
             fragment.mainListener = mainListener
             return fragment
         }
 
         fun newInstance(mainListener: NavigationView): Fragment {
-            val fragment = AddThemeFragment()
+            val fragment = EditThemeFragment()
             fragment.mainListener = mainListener
             return fragment
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            theme = gsonConverter.fromJson(it.getString(THEME_KEY), Theme::class.java)
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        mainListener.hideBottomNavigation()
-        val view = inflater.inflate(R.layout.fragment_add_theme, container, false)
+        val view = inflater.inflate(R.layout.fragment_edit_theme, container, false)
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initViews()
-        val themeJson = arguments?.getString(THEME_KEY)
-        if(themeJson != null) {
-            arguments?.let {
-                type = it.getString(TYPE)
-                if(type.equals(SUGGESTION_TYPE)) {
-                    suggestionTheme = gsonConverter.fromJson(themeJson, SuggestionTheme::class.java)
-                    theme = suggestionTheme?.theme!!
-                    setProgressData()
-                } else {
-                    theme = gsonConverter.fromJson(themeJson, Theme::class.java)
-                    setStaticData()
-                }
-//                btn_create_questions.setText(getString(R.string.save_changes))
-                mainListener.setToolbarTitle(getString(R.string.edit))
-            }
-        } else {
-            theme = Theme()
-        }
-        arguments?.getString(ID_KEY)?.let { studentId = it }
         super.onViewCreated(view, savedInstanceState)
-    }
-
-
-    private fun setProgressData() {
-        tv_added_subject.text = suggestionTheme?.themeProgress?.subject?.name
-        et_theme_name.setText(suggestionTheme?.themeProgress?.title)
-        et_theme_desc.setText(suggestionTheme?.themeProgress?.description)
-    }
-
-    private fun setStaticData() {
-        tv_added_subject.text = theme?.subject?.name
-        et_theme_name.setText(theme.title)
-        et_theme_desc.setText(theme.description)
     }
 
     private fun initViews() {
         setToolbarData()
         setListeners()
+        setThemeData()
+    }
 
-        spinner_student.setItems(getString(R.string.all_students_choosed))
-        spinner_student.setOnItemSelectedListener { view, position, id, item ->
-            if(!item.equals(getString(R.string.all_students_choosed))) {
-                studentType = ONE_CHOOSED
-            } else {
-                studentType = ALL_CHOOSED
-            }
-        }
+    private fun setThemeData() {
+        et_theme_name.setText(theme.title)
+        et_theme_desc.setText(theme.description)
+
+        skills = theme.skills
+        subject = theme.subject
+
+        tv_added_subject.text = subject?.name
+        tv_added_skills.text = getSkillsText()
     }
 
     private fun setToolbarData() {
-        mainListener.setToolbar(toolbar_add_done)
-        btn_add.visibility = View.GONE
-        btn_ok.visibility = View.VISIBLE
+        mainListener.setToolbar(toolbar_back_done)
     }
 
     private fun setListeners() {
-       /* btn_create_questions.setOnClickListener(this)
-        btn_create_questions.visibility = View.GONE*/
-
         btn_ok.setOnClickListener(this)
-        btn_add_subject.setOnClickListener(this)
-        btn_add_student.setOnClickListener(this)
         btn_back.setOnClickListener(this)
-
+        btn_add_subject.setOnClickListener(this)
         btn_add_skill.setOnClickListener(this)
         li_edit_skills.setOnClickListener(this)
     }
@@ -167,21 +138,14 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
 
             R.id.btn_ok -> {
                 if(validateData()) {
-                    theme.id = "${Random(24000).nextInt()}"
                     theme.title = et_theme_name.text.toString()
                     theme.description = et_theme_desc.text.toString()
-                    theme.curatorId = AppHelper.currentCurator.id
-                    studentId?.let { theme.studentId = it }
-                    theme.curator = AppHelper.currentCurator
-                    theme.student = student
                     subject?.let {
                         theme.subjectId = it.id
                         theme.subject = it
                     }
-                    theme.dateCreation = Date()
                     theme.skills = skills
-                    context?.let { presenter.addTheme(theme, it) }
-//                    backFragment()
+                    presenter.saveThemeEdit(theme)
                 } else {
                     mainListener.showSnackBar(getString(R.string.invalid_fields))
                 }
@@ -189,15 +153,6 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
 
             R.id.btn_add_subject -> {
                 val fragment = AddSubjectFragment.newInstance(mainListener)
-                fragment.setTargetFragment(this, ADD_SUBJECT)
-                mainListener.showFragment(SHOW_THEMES, this, fragment)
-//                mainListener.pushFragments(TAB_STUDENTS, fragment, false)
-//                mainListener.loadFragment(fragment)
-
-            }
-
-            R.id.btn_add_student -> {
-                val fragment = StudentListFragment.newInstance(mainListener)
                 fragment.setTargetFragment(this, ADD_SUBJECT)
                 mainListener.showFragment(SHOW_THEMES, this, fragment)
             }
@@ -228,13 +183,9 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
         }
     }
 
-    override fun getResultAfterEdit(isEdit: Boolean, intent: Intent?) {
-        if(isEdit) {
-            targetFragment?.onActivityResult(EDIT_SUGGESTION, Activity.RESULT_OK, intent)
-            mainListener.hideFragment()
-        } else {
-            backFragment()
-        }
+    override fun returnEditResult(intent: Intent?) {
+        targetFragment?.onActivityResult(EDIT_SUGGESTION, Activity.RESULT_OK, intent)
+        mainListener.hideFragment()
     }
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
@@ -248,15 +199,6 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
                     data?.getStringExtra(SUBJECT_KEY)?.let {
                         subject = gsonConverter.fromJson(it, Subject::class.java)
                         tv_added_subject.text = subject?.name
-                    }
-                }
-
-                ADD_STUDENT -> {
-                    data?.getStringExtra(USER_KEY)?.let {
-                        student = gsonConverter.fromJson(it, Student::class.java)
-//                        tv_added_student.text = student?.getFullName()
-                        spinner_student.setItems(getString(R.string.all_students_choosed), student?.getFullName())
-                        spinner_student.selectedIndex = 1
                     }
                 }
 
@@ -313,5 +255,17 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
         }
         listString.removeSuffix(",")
         return listString
+    }
+
+    private fun getSkillsText(): String {
+        if(skills.size != 0) {
+            listSkills.clear()
+            for (i in skills.indices) {
+                listSkills.add("${skills[i].name} ${getString(R.string.level)} ${skills[i].level}")
+            }
+            return getListString(listSkills)
+        } else {
+            return getString(R.string.doesnt_matter_for_all)
+        }
     }
 }

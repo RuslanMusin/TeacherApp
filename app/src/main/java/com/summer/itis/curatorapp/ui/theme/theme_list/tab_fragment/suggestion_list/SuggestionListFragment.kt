@@ -104,13 +104,16 @@ class SuggestionListFragment : BaseFragment<SuggestionListPresenter>(), Suggesti
                 suggestionTheme.student = student
                 suggestionTheme.studentId = i.toString()
 
-                suggestionTheme.theme = Theme()
-                suggestionTheme.theme?.id = "$i"
+                val theme = Theme()
+                theme.id = "$i"
+
+                suggestionTheme.theme = theme
                 suggestionTheme.themeId = "$i"
 
                 suggestionTheme.themeProgress = ThemeProgress()
                 suggestionTheme.themeProgress?.id = "$i"
                 suggestionTheme.themeProgressId = "$i"
+
                 suggestionTheme.themeProgress?.description = "Simple App for students"
                 suggestionTheme.theme?.description = "Simple App for students"
                 if(i % 2 == 0) {
