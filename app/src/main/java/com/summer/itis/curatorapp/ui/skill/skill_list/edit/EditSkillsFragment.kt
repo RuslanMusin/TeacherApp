@@ -13,11 +13,15 @@ import com.summer.itis.curatorapp.R
 import com.summer.itis.curatorapp.model.skill.Skill
 import com.summer.itis.curatorapp.model.user.Curator
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
+import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.SHOW_PROFILE
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
 import com.summer.itis.curatorapp.ui.skill.skill_list.edit.add_skill.AddSkillFragment
 import com.summer.itis.curatorapp.ui.skill.skill_list.view.SkillListFragment.Companion.EDIT_SKILLS
+import com.summer.itis.curatorapp.ui.student.search.choose_skill_main.ChooseSkillFragment
 import com.summer.itis.curatorapp.utils.AppHelper
+import com.summer.itis.curatorapp.utils.Const
+import com.summer.itis.curatorapp.utils.Const.ADD_SKILL
 import com.summer.itis.curatorapp.utils.Const.OWNER_TYPE
 import com.summer.itis.curatorapp.utils.Const.SKILL_KEY
 import com.summer.itis.curatorapp.utils.Const.TAG_LOG
@@ -45,8 +49,6 @@ class EditSkillsFragment : BaseFragment<EditSkillsPresenter>(), EditSkillsView, 
     companion object {
 
         const val TAG_SKILLS = "TAG_SKILLS"
-
-        const val ADD_SKILL = 1
 
         fun newInstance(args: Bundle, navigationView: NavigationView): Fragment {
             val fragment = EditSkillsFragment()
@@ -80,7 +82,7 @@ class EditSkillsFragment : BaseFragment<EditSkillsPresenter>(), EditSkillsView, 
     }
 
     private fun loadSkills() {
-//        presenter.loadSkills(AppHelper.currentCurator.id)
+//        presenterOne.loadSkills(AppHelper.currentCurator.id)
         if(user.skills.size == 0) {
             skills = ArrayList()
             for (i in 1..10) {
@@ -186,7 +188,10 @@ class EditSkillsFragment : BaseFragment<EditSkillsPresenter>(), EditSkillsView, 
     }
 
     private fun addSkill() {
-        val fragment = AddSkillFragment.newInstance(mainListener)
+       /* val fragment = AddSkillFragment.newInstance(mainListener)
+        fragment.setTargetFragment(this, ADD_SKILL)
+        mainListener.showFragment(SHOW_PROFILE, this, fragment)*/
+        val fragment = ChooseSkillFragment.newInstance(mainListener)
         fragment.setTargetFragment(this, ADD_SKILL)
         mainListener.showFragment(SHOW_PROFILE, this, fragment)
     }
@@ -205,7 +210,7 @@ class EditSkillsFragment : BaseFragment<EditSkillsPresenter>(), EditSkillsView, 
        search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
            override fun onQueryTextSubmit(query: String): Boolean {
-//                presenter.loadOfficialTestsByQUery(query)
+//                presenterOne.loadOfficialTestsByQUery(query)
 
                return false
            }

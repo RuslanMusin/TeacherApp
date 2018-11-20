@@ -79,12 +79,23 @@ class LoginPresenter: BasePresenter<LoginActView>() {
         val curator = Curator()
         curator.id = userId
         curator.email = email
-        curator.name = "Ruslan"
-        curator.lastname = "Musin"
-        curator.patronymic = "Maratovich"
+        curator.name = "Marat"
+        curator.lastname = "Nasrutdinov"
+        curator.patronymic = "Faritovich"
         curator.photoUrl = STUB_PATH
         curator.description = "usual desc"
         setUserSession(curator)
+
+        val otherCurator = Curator()
+        otherCurator.id = userId + "1"
+        otherCurator.email = email + "1"
+        otherCurator.name = "Айрат"
+        otherCurator.lastname = "Хасьянов"
+        otherCurator.patronymic = "Фаридович"
+        otherCurator.photoUrl = STUB_PATH
+        otherCurator.description = "usual desc"
+        AppHelper.otherCurator = otherCurator
+
         viewState.goToProfile(curator)
     }
 

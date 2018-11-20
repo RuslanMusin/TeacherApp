@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/margin.normal"
+    >
+
+    <RelativeLayout
+        android:id="@+id/expand_button"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:gravity="center"
+        >
+
+        <View
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@drawable/triangle"
+            />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_content_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/expand_button"
+        android:textColor="@color/primary_dark_text"
+        android:text="@string/skills"
+        android:textSize="16sp"
+        />
+
+ <!--   <com.github.aakira.expandablelayout.ExpandableLinearLayout
+        android:id="@+id/expandableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_below="@id/textView"
+        android:orientation="vertical"
+        app:ael_duration="400"
+        app:ael_expanded="false"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:padding="@dimen/margin_normal"
+            android:text="
+    sample.sample.sample.sample.sample.sample.sample.sample.sample.sample.\n
+    "
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            />
+    </com.github.aakira.expandablelayout.ExpandableLinearLayout>-->
+
+    <net.cachapa.expandablelayout.ExpandableLayout
+        android:id="@+id/expandable_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/tv_content_name"
+        app:el_duration="300"
+        app:el_expanded="false"
+        >
+
+      <!--  <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            android:textSize="@dimen/text.14"
+            android:paddingBottom="8dp"
+            android:text="Content"
+            android:textColor="@color/primary_dark_text" />-->
+
+        <LinearLayout
+            android:id="@+id/li_added_skills"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <!--<include layout="@layout/layout_item_skill"/>-->
+
+        </LinearLayout>
+
+    </net.cachapa.expandablelayout.ExpandableLayout>
+
+</RelativeLayout>

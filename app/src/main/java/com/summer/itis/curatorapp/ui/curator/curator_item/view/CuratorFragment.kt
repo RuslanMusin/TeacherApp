@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.curatorapp.R
 import com.summer.itis.curatorapp.model.user.Curator
-import com.summer.itis.curatorapp.repository.RepositoryProvider
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.TAB_PROFILE
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
@@ -19,18 +18,16 @@ import com.summer.itis.curatorapp.ui.curator.curator_item.description.view.Descr
 import com.summer.itis.curatorapp.ui.curator.curator_item.edit.EditCuratorFragment
 import com.summer.itis.curatorapp.ui.login.LoginActivity
 import com.summer.itis.curatorapp.ui.skill.skill_list.view.SkillListFragment
-import com.summer.itis.curatorapp.ui.work.one_work_list.WorkListFragment
+import com.summer.itis.curatorapp.ui.work.one_work_list.OneWorkListFragment
 import com.summer.itis.curatorapp.utils.AppHelper
 import com.summer.itis.curatorapp.utils.Const.CURATOR_TYPE
 import com.summer.itis.curatorapp.utils.Const.DESC_KEY
-import com.summer.itis.curatorapp.utils.Const.ID_KEY
 import com.summer.itis.curatorapp.utils.Const.MAX_LENGTH
 import com.summer.itis.curatorapp.utils.Const.OWNER_TYPE
-import com.summer.itis.curatorapp.utils.Const.TEST_LIST_TYPE
+import com.summer.itis.curatorapp.utils.Const.TAB_NAME
 import com.summer.itis.curatorapp.utils.Const.TYPE
 import com.summer.itis.curatorapp.utils.Const.USER_ID
 import com.summer.itis.curatorapp.utils.Const.USER_KEY
-import com.summer.itis.curatorapp.utils.Const.USER_TESTS
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.layout_personal.*
 import kotlinx.android.synthetic.main.toolbar_edit.*
@@ -185,7 +182,7 @@ class CuratorFragment : BaseFragment<CuratorPresenter>(), CuratorView, View.OnCl
 
     private fun giveTheme() {
         /*  changePlayButton(false)
-          presenter.checkGameCondition(user)*/
+          presenterOne.checkGameCondition(user)*/
     }
 
     private fun showSkills() {
@@ -194,9 +191,11 @@ class CuratorFragment : BaseFragment<CuratorPresenter>(), CuratorView, View.OnCl
     }
 
     private fun showWorks() {
-        val fragment = WorkListFragment.newInstance(argUser(user), mainListener)
+        val args = argUser(user)
+        args.putString(TAB_NAME, TAB_PROFILE)
+        val fragment = OneWorkListFragment.newInstance(args, mainListener)
         mainListener.pushFragments(TAB_PROFILE, fragment, true)
-//        mainListener.loadFragment(WorkListFragment.newInstance(argUser(user), mainListener))
+//        mainListener.loadFragment(OneWorkListFragment.newInstance(argUser(user), mainListener))
         /* val intent: Intent = Intent(this,OneCardListActivity::class.java)
          intent.putExtra(USER_ID,user.id)
          OneCardListActivity.start(this,intent)*/

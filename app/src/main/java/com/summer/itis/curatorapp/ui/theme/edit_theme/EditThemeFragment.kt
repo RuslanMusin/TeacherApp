@@ -8,12 +8,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.google.gson.reflect.TypeToken
 import com.summer.itis.curatorapp.R
 import com.summer.itis.curatorapp.R.drawable.student
 import com.summer.itis.curatorapp.R.id.*
-import com.summer.itis.curatorapp.R.string.subject
+import com.summer.itis.curatorapp.R.string.*
 import com.summer.itis.curatorapp.model.skill.Skill
 import com.summer.itis.curatorapp.model.skill.Subject
 import com.summer.itis.curatorapp.model.theme.SuggestionTheme
@@ -68,6 +71,11 @@ class EditThemeFragment : BaseFragment<EditThemePresenter>(), EditThemeView, Vie
     private var skills: MutableList<Skill> = ArrayList()
     private var listSkills: MutableList<String> = ArrayList()
 
+    private var imageViews: MutableList<ImageView> = ArrayList()
+    private var liViews: MutableList<LinearLayout> = ArrayList()
+
+    private lateinit var checkListener: View.OnClickListener
+
 
     companion object {
 
@@ -117,8 +125,16 @@ class EditThemeFragment : BaseFragment<EditThemePresenter>(), EditThemeView, Vie
         skills = theme.skills
         subject = theme.subject
 
-        tv_added_subject.text = subject?.name
-        tv_added_skills.text = getSkillsText()
+        if(skills.size == 0) {
+            tv_added_skills.text = getString(R.string.doesnt_matter_for_all)
+        } else {
+            tv_added_skills.visibility = View.GONE
+            for (skill in skills) {
+                addSkillView(skill)
+            }
+        }
+
+//        tv_added_skills.text = getSkillsText()
     }
 
     private fun setToolbarData() {
@@ -128,9 +144,39 @@ class EditThemeFragment : BaseFragment<EditThemePresenter>(), EditThemeView, Vie
     private fun setListeners() {
         btn_ok.setOnClickListener(this)
         btn_back.setOnClickListener(this)
-        btn_add_subject.setOnClickListener(this)
-        btn_add_skill.setOnClickListener(this)
-        li_edit_skills.setOnClickListener(this)
+        tv_add_skill.setOnClickListener(this)
+
+        checkListener = object: View.OnClickListener{
+            override fun onClick(v: View?) {
+                val ivRemove = v as ImageView
+                val index = imageViews.indexOf(ivRemove)
+                val liSkill = liViews[index]
+                li_added_skills.removeView(liSkill)
+                liViews.removeAt(index)
+                imageViews.removeAt(index)
+                skills.removeAt(index)
+//                textViews.removeAt(index)
+
+                if(liViews.size == 0) {
+                    tv_added_skills.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    private fun addSkillView(skill: Skill) {
+        val view: View = layoutInflater.inflate(R.layout.layout_item_tv_with_clear, li_added_skills,false)
+        val ivRemoveSkill: ImageView = view.findViewById(R.id.iv_remove_skill)
+        val tvAddedSkill: TextView = view.findViewById(R.id.tv_added_skill_name)
+        val tvAddedLevel: TextView = view.findViewById(R.id.tv_added_skill_level)
+
+        ivRemoveSkill.setOnClickListener(checkListener)
+        tvAddedSkill.text = skill.name
+        tvAddedLevel.text = getString(R.string.skill_level, skill.level)
+        imageViews.add(ivRemoveSkill)
+        liViews.add(view as LinearLayout)
+
+        li_added_skills.addView(view)
     }
 
     override fun onClick(v: View) {
@@ -140,10 +186,6 @@ class EditThemeFragment : BaseFragment<EditThemePresenter>(), EditThemeView, Vie
                 if(validateData()) {
                     theme.title = et_theme_name.text.toString()
                     theme.description = et_theme_desc.text.toString()
-                    subject?.let {
-                        theme.subjectId = it.id
-                        theme.subject = it
-                    }
                     theme.skills = skills
                     presenter.saveThemeEdit(theme)
                 } else {
@@ -151,17 +193,9 @@ class EditThemeFragment : BaseFragment<EditThemePresenter>(), EditThemeView, Vie
                 }
             }
 
-            R.id.btn_add_subject -> {
-                val fragment = AddSubjectFragment.newInstance(mainListener)
-                fragment.setTargetFragment(this, ADD_SUBJECT)
-                mainListener.showFragment(SHOW_THEMES, this, fragment)
-            }
-
             R.id.btn_back -> backFragment()
 
-            R.id.btn_add_skill -> addSkill()
-
-            R.id.li_edit_skills -> editSkills()
+            R.id.tv_add_skill -> addSkill()
         }
     }
 
@@ -169,18 +203,6 @@ class EditThemeFragment : BaseFragment<EditThemePresenter>(), EditThemeView, Vie
         val fragment = ChooseSkillFragment.newInstance(mainListener)
         fragment.setTargetFragment(this, ADD_SKILL)
         mainListener.showFragment(SHOW_THEMES, this, fragment)
-    }
-
-
-    private fun editSkills() {
-        if(!tv_added_skills.text.equals(getString(R.string.doesnt_matter_for_all))) {
-            val args = Bundle()
-            val listJson = gsonConverter.toJson(skills)
-            args.putString(SKILL_KEY, listJson)
-            val fragment = EditChooseLIstFragment.newInstance(args, mainListener)
-            fragment.setTargetFragment(this, EDIT_CHOOSED_SKILLS)
-            mainListener.showFragment(SHOW_THEMES, this, fragment)
-        }
     }
 
     override fun returnEditResult(intent: Intent?) {
@@ -194,39 +216,15 @@ class EditThemeFragment : BaseFragment<EditThemePresenter>(), EditThemeView, Vie
 
             when(reqCode) {
 
-                ADD_SUBJECT -> {
-                    Log.d(TAG_LOG, "getResult")
-                    data?.getStringExtra(SUBJECT_KEY)?.let {
-                        subject = gsonConverter.fromJson(it, Subject::class.java)
-                        tv_added_subject.text = subject?.name
-                    }
-                }
-
                 ADD_SKILL -> {
                     data?.let {
                         val skillJson = it.getStringExtra(SKILL_KEY)
                         val skill = gsonConverter.fromJson(skillJson, Skill::class.java)
                         skills.add(skill)
-                        val skillText = "${skill.name} ${getString(R.string.level)} ${skill.level}"
+                        /*val skillText = "${skill.name} ${getString(R.string.level)} ${skill.level}"
                         listSkills.add(skillText)
-                        tv_added_skills.text = getListString(listSkills)
-                    }
-                }
-
-                EDIT_CHOOSED_SKILLS -> {
-                    data?.let {
-                        val founderListType = object : TypeToken<ArrayList<Skill>>() { }.type
-                        val skillsJson = it.getStringExtra(SKILL_KEY)
-                        skills = gsonConverter.fromJson(skillsJson, founderListType)
-                        listSkills.clear()
-                        if(skills.size == 0) {
-                            tv_added_skills.text = getString(R.string.doesnt_matter_for_all)
-                        } else {
-                            for (i in skills.indices) {
-                                listSkills.add("${skills[i].name} ${getString(R.string.level)} ${skills[i].level}")
-                            }
-                            tv_added_skills.text = getListString(listSkills)
-                        }
+                        tv_added_skills.text = getListString(listSkills)*/
+                        addSkillView(skill)
                     }
                 }
             }
@@ -236,8 +234,7 @@ class EditThemeFragment : BaseFragment<EditThemePresenter>(), EditThemeView, Vie
     private fun validateData(): Boolean{
         val name = et_theme_name.text.toString()
         val desc  = et_theme_desc.text.toString()
-        val subjectName = tv_added_subject.text
-        if(name.equals("") || desc.equals("") || subjectName.equals("")) {
+        if(name.equals("") || desc.equals("")) {
             return false
         } else {
             return true

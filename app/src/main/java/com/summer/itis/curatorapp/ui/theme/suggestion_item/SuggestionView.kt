@@ -5,4 +5,6 @@ import com.summer.itis.curatorapp.ui.comment.CommentView
 
 interface SuggestionView: CommentView {
 
+    fun setStatus(status: String)
+
 }

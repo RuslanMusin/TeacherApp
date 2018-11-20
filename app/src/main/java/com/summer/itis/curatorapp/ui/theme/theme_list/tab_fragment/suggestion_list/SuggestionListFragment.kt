@@ -7,8 +7,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.curatorapp.R
-import com.summer.itis.curatorapp.R.string.skills
-import com.summer.itis.curatorapp.model.skill.Skill
 import com.summer.itis.curatorapp.model.theme.SuggestionTheme
 import com.summer.itis.curatorapp.model.theme.Theme
 import com.summer.itis.curatorapp.model.theme.ThemeProgress
@@ -21,23 +19,30 @@ import com.summer.itis.curatorapp.utils.AppHelper
 
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.layout_recycler_list.*
-import java.util.*
 import java.util.regex.Pattern
 import android.support.v7.widget.RecyclerView
+import android.telephony.PhoneNumberUtils.WAIT
+import android.util.Log
+import com.afollestad.materialdialogs.MaterialDialog
+import com.summer.itis.curatorapp.R.string.suggestions
 import com.summer.itis.curatorapp.model.skill.Subject
 import com.summer.itis.curatorapp.model.user.Student
-import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.TAB_STUDENTS
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.TAB_THEMES
-import com.summer.itis.curatorapp.ui.student.student_item.StudentFragment
 import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemeFragment
 import com.summer.itis.curatorapp.ui.theme.suggestion_item.SuggestionFragment
+import com.summer.itis.curatorapp.utils.Const.CHANGED_CURATOR
+import com.summer.itis.curatorapp.utils.Const.CHANGED_STUDENT
 import com.summer.itis.curatorapp.utils.Const.CURATOR_TYPE
 import com.summer.itis.curatorapp.utils.Const.ID_KEY
-import com.summer.itis.curatorapp.utils.Const.STUDENT_TYPE
+import com.summer.itis.curatorapp.utils.Const.IN_PROGRESS_CURATOR
+import com.summer.itis.curatorapp.utils.Const.IN_PROGRESS_STUDENT
+import com.summer.itis.curatorapp.utils.Const.TAG_LOG
 import com.summer.itis.curatorapp.utils.Const.THEME_KEY
+import com.summer.itis.curatorapp.utils.Const.WAITING_CURATOR
+import com.summer.itis.curatorapp.utils.Const.WAITING_STUDENT
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_theme_list.*
-import kotlinx.android.synthetic.main.layout_suggestion.*
+import kotlin.collections.ArrayList
 
 
 class SuggestionListFragment : BaseFragment<SuggestionListPresenter>(), SuggestionListView, View.OnClickListener {
@@ -51,6 +56,8 @@ class SuggestionListFragment : BaseFragment<SuggestionListPresenter>(), Suggesti
 
     @InjectPresenter
     lateinit var presenter: SuggestionListPresenter
+
+    var actionNumber: Int = 0
 
     companion object {
 
@@ -85,7 +92,7 @@ class SuggestionListFragment : BaseFragment<SuggestionListPresenter>(), Suggesti
     }
 
     private fun loadSkills() {
-//        presenter.loadSkills(AppHelper.currentCurator.id)
+//        presenterOne.loadSkills(AppHelper.currentCurator.id)
         if(user.suggestions.size == 0) {
             suggestions = ArrayList()
 
@@ -125,7 +132,7 @@ class SuggestionListFragment : BaseFragment<SuggestionListPresenter>(), Suggesti
                     subject.name = "Android"
                     subject.id  = "$i"
                     suggestionTheme.themeProgress?.subject = subject
-                    suggestionTheme.status = getString(R.string.theme_on_revision)
+                    suggestionTheme.status = WAITING_CURATOR
                     suggestionTheme.type = CURATOR_TYPE
                     suggestionTheme.themeProgress?.subject = subject
                     suggestionTheme.theme?.subject = subject
@@ -138,7 +145,7 @@ class SuggestionListFragment : BaseFragment<SuggestionListPresenter>(), Suggesti
                     subject.id  = "$i"
                     subject.name = "Интеллектуальные системы"
                     suggestionTheme.themeProgress?.subject = subject
-                    suggestionTheme.status = getString(R.string.theme_is_new)
+                    suggestionTheme.status = WAITING_CURATOR
                     suggestionTheme.themeProgress?.subject = subject
                     suggestionTheme.theme?.subject = subject
                 }
@@ -189,7 +196,7 @@ class SuggestionListFragment : BaseFragment<SuggestionListPresenter>(), Suggesti
     }
 
     private fun initRecycler() {
-        adapter = SuggestionAdapter(ArrayList())
+        adapter = SuggestionAdapter(ArrayList(), this)
         val manager = LinearLayoutManager(activity as Activity)
         rv_list.layoutManager = manager
         rv_list.setEmptyView(tv_empty)
@@ -218,6 +225,79 @@ class SuggestionListFragment : BaseFragment<SuggestionListPresenter>(), Suggesti
         val fragment = SuggestionFragment.newInstance(args, mainListener)
         mainListener.pushFragments(TAB_THEMES, fragment, true)
     }
+
+    override fun chooseUserFakeAction(pos: Int) {
+        val suggestion = suggestions[pos]
+        var listAction: MutableList<String> = ArrayList()
+        val status = suggestion.status
+        when (status) {
+
+            WAITING_STUDENT -> {
+                listAction = listOf(getString(R.string.accept_theme), getString(R.string.reject_theme),
+                        getString(R.string.to_revision)).toMutableList()
+                openFakeDialog(suggestion, listAction)
+            }
+
+            WAITING_CURATOR -> {
+                listAction = listOf(getString(R.string.reject_theme)
+                ).toMutableList()
+                openFakeDialog(suggestion, listAction)
+            }
+
+            IN_PROGRESS_STUDENT -> {
+                listAction = listOf(getString(R.string.reject_theme),
+                        getString(R.string.save_changes)).toMutableList()
+                openFakeDialog(suggestion, listAction)
+            }
+
+            IN_PROGRESS_CURATOR -> {
+                listAction = listOf(getString(R.string.reject_theme)).toMutableList()
+                openFakeDialog(suggestion, listAction)
+
+            }
+
+            CHANGED_CURATOR -> {
+                listAction = listOf(getString(R.string.accept_theme), getString(R.string.reject_theme),
+                        getString(R.string.to_revision)).toMutableList()
+                openFakeDialog(suggestion, listAction)
+            }
+
+            CHANGED_STUDENT -> {
+                listAction = listOf(getString(R.string.reject_theme)
+                ).toMutableList()
+                openFakeDialog(suggestion, listAction)
+
+            }
+        }
+
+    }
+
+    private fun openFakeDialog(suggestionTheme: SuggestionTheme, listAction: MutableList<String>) {
+        actionNumber = 0
+        this.activity?.let {
+            MaterialDialog.Builder(it)
+                    .title(R.string._should_user_fake_action_be_choosed)
+                    .items(listAction)
+                    .itemsCallbackSingleChoice(0 , { dialog, view, which, text ->
+                        actionNumber = which
+                        Log.d(TAG_LOG, "actionNum = $actionNumber and ${listAction[actionNumber]}")
+                        true
+                    })
+                    .alwaysCallSingleChoiceCallback()
+                    .positiveText(R.string.button_ok)
+                    .negativeText(R.string.cancel)
+                    .onNegative { dialog, which ->
+                        dialog.dismiss()
+                    }
+                    .onPositive { dialog, which ->
+                        this.context?.let { it1 ->
+                            presenter.setFakeResponse(suggestionTheme, listAction[actionNumber], it1)
+                        }
+                    }
+                    .show()
+        }
+    }
+
 
     override fun findByQuery(query: String) {
         val pattern: Pattern = Pattern.compile("${query.toLowerCase()}.*")

@@ -11,11 +11,14 @@ import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragPresenter
 import com.summer.itis.curatorapp.utils.AppHelper
 import com.summer.itis.curatorapp.utils.Const.ADD_THEME_TYPE
 import com.summer.itis.curatorapp.utils.Const.CURATOR_TYPE
+import com.summer.itis.curatorapp.utils.Const.ONE_CHOOSED
 import com.summer.itis.curatorapp.utils.Const.SUGGESTION_TYPE
 import com.summer.itis.curatorapp.utils.Const.THEME_KEY
 import com.summer.itis.curatorapp.utils.Const.THEME_TYPE
+import com.summer.itis.curatorapp.utils.Const.WAITING_STUDENT
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
 import io.reactivex.disposables.CompositeDisposable
+import java.util.*
 
 @InjectViewState
 class AddThemePresenter(): BaseFragPresenter<AddThemeView>() {
@@ -66,9 +69,8 @@ class AddThemePresenter(): BaseFragPresenter<AddThemeView>() {
     fun addTheme(theme: Theme, context: Context) {
         if(theme.student != null) {
             val suggestionTheme = SuggestionTheme()
-            suggestionTheme.id = theme.id
+            suggestionTheme.id = "${Random().nextInt(24000)}"
             suggestionTheme.theme = theme
-            suggestionTheme.status = context.getString(R.string.status_new)
             suggestionTheme.curator = theme.curator
             suggestionTheme.student = theme.student
             suggestionTheme.type = CURATOR_TYPE
@@ -77,14 +79,16 @@ class AddThemePresenter(): BaseFragPresenter<AddThemeView>() {
             themeProgress.title = theme.title
             themeProgress.description = theme.description
             suggestionTheme.themeProgress = themeProgress
+            suggestionTheme.status = WAITING_STUDENT
 
+            theme.targetType = ONE_CHOOSED
             theme.student = null
 
-            AppHelper.currentCurator.suggestions.add(suggestionTheme)
+            AppHelper.currentCurator.suggestions.add(0, suggestionTheme)
         }
 
 
-        AppHelper.currentCurator.themes.add(theme)
+        AppHelper.currentCurator.themes.add(0, theme)
         AppHelper.saveCurrentState(AppHelper.currentCurator, context)
         viewState.getResultAfterEdit(false, null)
     }

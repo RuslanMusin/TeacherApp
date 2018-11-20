@@ -6,5 +6,4 @@ import com.summer.itis.curatorapp.model.user.Curator
 interface BaseFragView: MvpView {
 
     fun saveCuratorState()
-
 }

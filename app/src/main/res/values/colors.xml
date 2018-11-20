@@ -50,5 +50,7 @@
     <color name="game_card_hp">#ff5d5d</color>
     <color name="game_card_strength">#990000</color>
 
+    <color name="colorFocused">#bbdefb</color>
+
 </resources>
 

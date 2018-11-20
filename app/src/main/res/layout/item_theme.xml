@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp">
+    >
 
     <LinearLayout
         android:id="@+id/li_theme"
@@ -66,8 +66,8 @@
     </LinearLayout>
 
 
-    <LinearLayout
-    android:id="@+id/li_curator"
+   <!-- <LinearLayout
+    android:id="@+id/li_status"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
             android:textSize="@dimen/text.14"
             tools:text="Authors" />
 
-    </LinearLayout>
+    </LinearLayout>-->
 
    <include layout="@layout/layout_divider"/>
 

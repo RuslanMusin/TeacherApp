@@ -14,8 +14,8 @@ import com.summer.itis.curatorapp.model.skill.Skill
 import com.summer.itis.curatorapp.model.user.Curator
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
-import com.summer.itis.curatorapp.ui.skill.skill_list.edit.EditSkillsFragment.Companion.ADD_SKILL
 import com.summer.itis.curatorapp.utils.AppHelper
+import com.summer.itis.curatorapp.utils.Const.ADD_SKILL
 import com.summer.itis.curatorapp.utils.Const.OWNER_TYPE
 import com.summer.itis.curatorapp.utils.Const.SKILL_KEY
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
@@ -73,9 +73,9 @@ class AddSkillFragment : BaseFragment<AddSkillPresenter>(), AddSkillView, View.O
     }
 
     private fun loadSkills() {
-//        presenter.loadSkills(AppHelper.currentCurator.id)
-        skills = ArrayList()
-        var skill: Skill = Skill()
+//        presenterOne.loadSkills(AppHelper.currentCurator.id)
+        this.activity?.let { skills = AppHelper.getSkillsList(it).toMutableList() }
+       /* var skill: Skill = Skill()
 
         skill.name = "Java"
         skill.id = "101"
@@ -98,7 +98,7 @@ class AddSkillFragment : BaseFragment<AddSkillPresenter>(), AddSkillView, View.O
             this.activity?.let { levelStr = AppHelper.getLevelStr(level, it) }
             skill.level = levelStr
             skills.add(skill)
-        }
+        }*/
 
         changeDataSet(skills)
     }
@@ -184,7 +184,7 @@ class AddSkillFragment : BaseFragment<AddSkillPresenter>(), AddSkillView, View.O
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
-//                presenter.loadOfficialTestsByQUery(query)
+//                presenterOne.loadOfficialTestsByQUery(query)
 
                 return false
             }

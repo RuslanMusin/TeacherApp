@@ -9,17 +9,33 @@ object Const {
 
     const val TAG_LOG = "TAG"
 
+    const val TAB_NAME = "TAB_NAME"
+
     const val MAX_LENGTH = 80
     const val MORE_TEXT = "..."
 
     const val SPACE = " "
 
+    //suggestion_theme_status
+    const val WAITING_CURATOR = "WAITING_CURATOR"
+    const val WAITING_STUDENT = "WAITING_STUDENT"
+    const val IN_PROGRESS_CURATOR = "IN_PROGRESS_CURATOR"
+    const val IN_PROGRESS_STUDENT = "IN_PROGRESS_STUDENT"
+    const val CHANGED_CURATOR = "CHANGED_CURATOR"
+    const val CHANGED_STUDENT = "CHANGED_STUDENT"
+    const val REJECTED_CURATOR = "REJECTED_CURATOR"
+    const val REJECTED_STUDENT = "REJECTED_STUDENT"
+    const val ACCEPTED_CURATOR = "ACCEPTED_CURATOR"
+    const val ACCEPTED_STUDENT = "ACCEPTED_STUDENT"
+    const val ACCEPTED_BOTH = "ACCEPTED_BOTH"
 
     const val SUBJECT_KEY = "subject"
     const val SKILL_KEY = "skill"
     const val THEME_KEY = "suggestionTheme"
 
     const val COURSE_KEY = "course_key"
+
+    const val WORK_KEY = "work_key"
 
     const val DESC_KEY = "desc"
 

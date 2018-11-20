@@ -1,7 +1,6 @@
 package com.summer.itis.curatorapp.ui.work.one_work_list
 
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -9,38 +8,42 @@ import android.support.v7.widget.SearchView
 import android.view.*
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.curatorapp.R
-import com.summer.itis.curatorapp.model.skill.Skill
 import com.summer.itis.curatorapp.model.user.Curator
 import com.summer.itis.curatorapp.model.user.Person
 import com.summer.itis.curatorapp.model.user.Student
 import com.summer.itis.curatorapp.model.work.Work
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
+import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
-import com.summer.itis.curatorapp.ui.skill.skill_list.edit.EditSkillsFragment
-import com.summer.itis.curatorapp.ui.skill.skill_list.view.SkillAdapter
+import com.summer.itis.curatorapp.ui.theme.theme_item.ThemeFragment
+import com.summer.itis.curatorapp.ui.work.work_item.WorkFragment
+import com.summer.itis.curatorapp.utils.AppHelper
 import com.summer.itis.curatorapp.utils.Const
 import com.summer.itis.curatorapp.utils.Const.CURATOR_TYPE
 import com.summer.itis.curatorapp.utils.Const.OWNER_TYPE
 import com.summer.itis.curatorapp.utils.Const.PERSON_TYPE
 import com.summer.itis.curatorapp.utils.Const.STUDENT_TYPE
+import com.summer.itis.curatorapp.utils.Const.TAB_NAME
 import com.summer.itis.curatorapp.utils.Const.WATCHER_TYPE
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.layout_recycler_list.*
 import kotlinx.android.synthetic.main.toolbar_edit.*
+import java.util.*
 import java.util.regex.Pattern
 
-class WorkListFragment : BaseFragment<WorkListPresenter>(), WorkListView, View.OnClickListener {
+class OneWorkListFragment : BaseFragment<OneWorkListPresenter>(), OneWorkListView, View.OnClickListener {
 
+    lateinit var tabName: String
     lateinit var user: Person
     var personType: String = CURATOR_TYPE
     var type: String = OWNER_TYPE
     lateinit override var mainListener: NavigationView
     private lateinit var adapter: WorkAdapter
 
-    lateinit var skills: MutableList<Work>
+    lateinit var works: MutableList<Work>
 
     @InjectPresenter
-    lateinit var presenter: WorkListPresenter
+    lateinit var presenterOne: OneWorkListPresenter
 
     companion object {
 
@@ -49,14 +52,14 @@ class WorkListFragment : BaseFragment<WorkListPresenter>(), WorkListView, View.O
         const val EDIT_SKILLS = 1
 
         fun newInstance(args: Bundle, navigationView: NavigationView): Fragment {
-            val fragment = WorkListFragment()
+            val fragment = OneWorkListFragment()
             fragment.arguments = args
             fragment.mainListener = navigationView
             return fragment
         }
 
         fun newInstance(navigationView: NavigationView): Fragment {
-            val fragment = WorkListFragment()
+            val fragment = OneWorkListFragment()
             fragment.mainListener = navigationView
             return fragment
         }
@@ -66,6 +69,7 @@ class WorkListFragment : BaseFragment<WorkListPresenter>(), WorkListView, View.O
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         arguments?.let {
+            tabName = it.getString(TAB_NAME)
             personType = it.getString(PERSON_TYPE)
             if (personType.equals(STUDENT_TYPE)) {
                 type = WATCHER_TYPE
@@ -88,19 +92,25 @@ class WorkListFragment : BaseFragment<WorkListPresenter>(), WorkListView, View.O
     }
 
     private fun loadSkills() {
-//        presenter.loadSkills(AppHelper.currentCurator.id)
-        skills = ArrayList()
-
-        for(i in 1..10) {
-            var work: Work = Work()
-            if(i % 2 == 0) {
-                work.name = "Machine Learning Project $i"
-            } else {
-                work.name = "Java Project $i"
+//        presenterOne.loadSkills(AppHelper.currentCurator.id)
+        if(user.works.size == 0) {
+            works = ArrayList()
+            val themes = AppHelper.getThemeList(AppHelper.currentCurator)
+            val calendarFirst = Calendar.getInstance()
+            calendarFirst.set(2018, 9, 10)
+            for (i in 0..9) {
+                val work = Work()
+                work.id = "$i"
+                work.theme = themes[i]
+                work.dateStart = calendarFirst.time
+                work.dateFinish = null
+                works.add(work)
             }
-            skills.add(work)
+            user.works = works
+        } else {
+            works = user.works
         }
-        changeDataSet(skills)
+        changeDataSet(works)
     }
 
     private fun initViews() {
@@ -155,7 +165,10 @@ class WorkListFragment : BaseFragment<WorkListPresenter>(), WorkListView, View.O
     }
 
     override fun onItemClick(item: Work) {
-//        TestActivity.start(this, item)
+        val args = Bundle()
+        args.putString(Const.WORK_KEY, Const.gsonConverter.toJson(item))
+        val fragment = WorkFragment.newInstance(args, mainListener)
+        mainListener.pushFragments(tabName, fragment, true)
     }
 
     override fun onClick(v: View) {
@@ -198,7 +211,7 @@ class WorkListFragment : BaseFragment<WorkListPresenter>(), WorkListView, View.O
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
-//                presenter.loadOfficialTestsByQUery(query)
+//                presenterOne.loadOfficialTestsByQUery(query)
                 findFromList(query)
 
                 if (!finalSearchView.isIconified) {
@@ -220,8 +233,8 @@ class WorkListFragment : BaseFragment<WorkListPresenter>(), WorkListView, View.O
     private fun findFromList(query: String) {
         val pattern: Pattern = Pattern.compile("${query.toLowerCase()}.*")
         val list: MutableList<Work> = java.util.ArrayList()
-        for(skill in skills) {
-            if(pattern.matcher(skill.name.toLowerCase()).matches()) {
+        for(skill in works) {
+            if(pattern.matcher(skill.theme.title.toLowerCase()).matches()) {
                 list.add(skill)
             }
         }

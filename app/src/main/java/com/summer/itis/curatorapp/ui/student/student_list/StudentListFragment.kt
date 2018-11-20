@@ -27,6 +27,7 @@ import com.summer.itis.curatorapp.utils.Const.REQUEST_CODE
 import com.summer.itis.curatorapp.utils.Const.SEND_THEME
 import com.summer.itis.curatorapp.utils.Const.SKILL_KEY
 import com.summer.itis.curatorapp.utils.Const.STUDENT_TYPE
+import com.summer.itis.curatorapp.utils.Const.TAB_NAME
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.layout_recycler_list.*
@@ -93,7 +94,7 @@ class StudentListFragment : BaseFragment<StudentListPresenter>(), StudentListVie
     }
 
     private fun loadStudents() {
-//        presenter.loadStudents()
+//        presenterOne.loadStudents()
         students = ArrayList()
         var student: Student
         val skillOther = loadSkills()
@@ -124,7 +125,7 @@ class StudentListFragment : BaseFragment<StudentListPresenter>(), StudentListVie
     }
 
     private fun loadSkills(): MutableList<Skill> {
-//        presenter.loadSkills(AppHelper.currentCurator.id)
+//        presenterOne.loadSkills(AppHelper.currentCurator.id)
         val skills: MutableList<Skill> = ArrayList()
         var skill: Skill = Skill()
 
@@ -205,6 +206,7 @@ class StudentListFragment : BaseFragment<StudentListPresenter>(), StudentListVie
     override fun onItemClick(item: Student) {
         val args = argUser(item, STUDENT_TYPE)
         args.putInt(REQUEST_CODE, requestCode)
+        args.putString(TAB_NAME, SHOW_THEMES)
         val fragment = StudentFragment.newInstance(args, mainListener)
         fragment.setTargetFragment(this, requestCode)
         mainListener.showFragment(SHOW_THEMES, this, fragment)
@@ -233,7 +235,7 @@ class StudentListFragment : BaseFragment<StudentListPresenter>(), StudentListVie
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
-//                presenter.loadOfficialTestsByQUery(query)
+//                presenterOne.loadOfficialTestsByQUery(query)
                 findFromList(query)
 
                 if (!finalSearchView.isIconified) {

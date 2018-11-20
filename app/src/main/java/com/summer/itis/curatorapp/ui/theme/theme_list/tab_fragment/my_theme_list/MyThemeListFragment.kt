@@ -9,8 +9,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.curatorapp.R
+import com.summer.itis.curatorapp.R.drawable.student
+import com.summer.itis.curatorapp.model.skill.Skill
 import com.summer.itis.curatorapp.model.skill.Subject
 import com.summer.itis.curatorapp.model.theme.SuggestionTheme
 import com.summer.itis.curatorapp.model.theme.Theme
@@ -18,7 +21,9 @@ import com.summer.itis.curatorapp.model.user.Curator
 import com.summer.itis.curatorapp.model.user.Student
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity
+import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.SHOW_THEMES
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
+import com.summer.itis.curatorapp.ui.student.student_list.StudentListFragment
 import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemeFragment
 import com.summer.itis.curatorapp.ui.theme.suggestion_item.SuggestionFragment
 import com.summer.itis.curatorapp.ui.theme.theme_item.ThemeFragment
@@ -27,6 +32,9 @@ import com.summer.itis.curatorapp.ui.theme.theme_list.tab_fragment.suggestion_li
 import com.summer.itis.curatorapp.ui.theme.theme_list.tab_fragment.suggestion_list.SuggestionListPresenter
 import com.summer.itis.curatorapp.utils.AppHelper
 import com.summer.itis.curatorapp.utils.Const
+import com.summer.itis.curatorapp.utils.Const.ALL_CHOOSED
+import com.summer.itis.curatorapp.utils.Const.REQUEST_CODE
+import com.summer.itis.curatorapp.utils.Const.SEND_THEME
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_theme_list.*
 import kotlinx.android.synthetic.main.layout_recycler_list.*
@@ -42,6 +50,8 @@ class MyThemeListFragment : BaseFragment<MyThemeListPresenter>(), MyThemeListVie
 
     @InjectPresenter
     lateinit var presenter: MyThemeListPresenter
+
+    private var fakeStudentNum = 0
 
     companion object {
 
@@ -76,10 +86,10 @@ class MyThemeListFragment : BaseFragment<MyThemeListPresenter>(), MyThemeListVie
     }
 
     private fun loadSkills() {
-//        presenter.loadSkills(AppHelper.currentCurator.id)
+//        presenterOne.loadSkills(AppHelper.currentCurator.id)
         if(user.themes.size == 0) {
             themes = ArrayList()
-
+            val skills = this.activity?.let { AppHelper.getSkillsList(it) }
             for (i in 1..10) {
                 val theme = Theme()
                 theme.id = "$i"
@@ -87,12 +97,10 @@ class MyThemeListFragment : BaseFragment<MyThemeListPresenter>(), MyThemeListVie
                 theme.curator = curator
                 theme.curatorId = curator.id
 //                suggestionTheme.curatorName = user.name
-                val student = Student()
-                student.name = "Ruslan"
-                student.lastname = "Musin"
-                student.patronymic = "Maratovich"
-                theme.student = student
+                theme.student = null
                 theme.studentId = i.toString()
+                val lastNum = if(10 - i > 3)  i + 3 else i + 10 - i
+                theme.skills = skills?.subList(i, lastNum) as MutableList<Skill>
 
                 theme.description = "Simple App for students"
                 if(i % 2 == 0) {
@@ -156,7 +164,7 @@ class MyThemeListFragment : BaseFragment<MyThemeListPresenter>(), MyThemeListVie
     }
 
     private fun initRecycler() {
-        adapter = ThemeAdapter(ArrayList())
+        adapter = ThemeAdapter(ArrayList(), this)
         val manager = LinearLayoutManager(activity as Activity)
         rv_list.layoutManager = manager
         rv_list.setEmptyView(tv_empty)
@@ -184,6 +192,50 @@ class MyThemeListFragment : BaseFragment<MyThemeListPresenter>(), MyThemeListVie
         args.putString(Const.THEME_KEY, Const.gsonConverter.toJson(item))
         val fragment = ThemeFragment.newInstance(args, mainListener)
         mainListener.pushFragments(NavigationBaseActivity.TAB_THEMES, fragment, true)
+    }
+
+    override fun openStudentAction(adapterPosition: Int) {
+        val theme = themes[adapterPosition]
+        if(theme.targetType.equals(ALL_CHOOSED)) {
+            this.activity?.let {
+                MaterialDialog.Builder(it)
+                        .title(R.string._should_user_fake_choose_theme)
+                        .items(R.array.fake_students)
+                        .itemsCallbackSingleChoice(0, MaterialDialog.ListCallbackSingleChoice { dialog, view, which, text ->
+                            fakeStudentNum = which
+                            true
+                        })
+                        .alwaysCallSingleChoiceCallback()
+                        .positiveText(R.string.button_ok)
+                        .negativeText(R.string.cancel)
+                        .onNegative { dialog, which ->
+                            dialog.dismiss()
+                        }
+                        .onPositive { dialog, which ->
+                            this.context?.let { it1 ->
+                                presenter.addFakeSuggestion(themes[adapterPosition], AppHelper.getFakeStudent(fakeStudentNum, it1))
+                            }
+                        }
+                        .show()
+            }
+        } else {
+            this.activity?.let {
+                MaterialDialog.Builder(it)
+                        .title(R.string.student_fake_theme)
+                        .content(R.string.should_user_send_fake_theme)
+                        .positiveText(R.string.button_ok)
+                        .negativeText(R.string.cancel)
+                        .onNegative { dialog, which ->
+                            dialog.dismiss()
+                        }
+                        .onPositive { dialog, which ->
+                            this.context?.let { it1 ->
+                                presenter.addFakeStudentSuggestion(themes[adapterPosition], AppHelper.getFakeStudent(fakeStudentNum, it1))
+                            }
+                        }
+                        .show()
+            }
+        }
     }
 
     override fun findByQuery(query: String) {

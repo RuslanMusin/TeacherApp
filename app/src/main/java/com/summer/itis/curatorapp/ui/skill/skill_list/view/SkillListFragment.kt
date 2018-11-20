@@ -104,10 +104,10 @@ class SkillListFragment : BaseFragment<SkillListPresenter>(), SkillListView, Vie
     }
 
     private fun loadSkills() {
-//        presenter.loadSkills(AppHelper.currentCurator.id)
+//        presenterOne.loadSkills(AppHelper.currentCurator.id)
         if(user.skills.size == 0) {
-            skills = ArrayList()
-            var skill: Skill = Skill()
+            this.activity?.let { skills = AppHelper.getMySkillList(it).toMutableList()}
+          /*  var skill: Skill = Skill()
 
             skill.name = "Java"
             skill.id = "101"
@@ -123,7 +123,9 @@ class SkillListFragment : BaseFragment<SkillListPresenter>(), SkillListView, Vie
                 this.activity?.let { levelStr = AppHelper.getLevelStr(level, it) }
                 skill.level = levelStr
                 skills.add(skill)
-            }
+            }*/
+            AppHelper.currentCurator.skills = skills
+            saveCuratorState()
 
         } else {
             skills = user.skills
@@ -220,7 +222,9 @@ class SkillListFragment : BaseFragment<SkillListPresenter>(), SkillListView, Vie
                     data?.getStringExtra(SKILL_KEY)?.let {
                         val founderListType = object : TypeToken<ArrayList<Skill>>(){}.type
                         val skills: List<Skill> = gsonConverter.fromJson(it, founderListType)
-                       /* themes.add(0, skill)*/
+                       /* works.add(0, skill)*/
+                        AppHelper.currentCurator.skills = skills.toMutableList()
+                        saveCuratorState()
                         changeDataSet(skills)
                     }
 //                    changeDataSet(user.subjects)
@@ -243,7 +247,7 @@ class SkillListFragment : BaseFragment<SkillListPresenter>(), SkillListView, Vie
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
-//                presenter.loadOfficialTestsByQUery(query)
+//                presenterOne.loadOfficialTestsByQUery(query)
                 findFromList(query)
 
                 if (!finalSearchView.isIconified) {

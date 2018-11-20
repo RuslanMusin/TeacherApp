@@ -141,7 +141,9 @@
                     android:layout_marginTop="@dimen/margin.normal"
                     android:orientation="vertical">
 
-                    <TextView
+                    <include layout="@layout/layout_expandable"/>
+
+                    <!--<TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/skills"
@@ -171,7 +173,7 @@
                             android:padding="8dp"
                             android:layout_gravity="right|bottom"
                             android:background="@android:color/transparent"/>
-                    </com.ms.square.android.expandabletextview.ExpandableTextView>
+                    </com.ms.square.android.expandabletextview.ExpandableTextView>-->
 
                     <include layout="@layout/layout_divider"/>
 

@@ -74,9 +74,9 @@ class ChooseAddSkillFragment : BaseFragment<ChooseSkilllPresenter>(), ChooseSkil
     }
 
     private fun loadSkills() {
-//        presenter.loadSkills(AppHelper.currentCurator.id)
-        skills = ArrayList()
-        var skill: Skill = Skill()
+//        presenterOne.loadSkills(AppHelper.currentCurator.id)
+        this.activity?.let { skills = AppHelper.getSkillsList(it).toMutableList() }
+       /* var skill: Skill = Skill()
 
         skill.name = "Java"
         skill.id = "101"
@@ -99,7 +99,7 @@ class ChooseAddSkillFragment : BaseFragment<ChooseSkilllPresenter>(), ChooseSkil
             this.activity?.let { levelStr = AppHelper.getLevelStr(level, it) }
             skill.level = levelStr
             skills.add(skill)
-        }
+        }*/
 
         changeDataSet(skills)
     }
@@ -185,7 +185,7 @@ class ChooseAddSkillFragment : BaseFragment<ChooseSkilllPresenter>(), ChooseSkil
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
-//                presenter.loadOfficialTestsByQUery(query)
+//                presenterOne.loadOfficialTestsByQUery(query)
 
                 return false
             }

@@ -19,6 +19,7 @@ import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity
 import com.summer.itis.curatorapp.ui.curator.curator_item.view.CuratorFragment
 import com.summer.itis.curatorapp.ui.student.student_list.StudentListFragment
 import com.summer.itis.curatorapp.ui.theme.theme_list.ThemeListFragment
+import com.summer.itis.curatorapp.ui.work.work_list.WorkListFragment
 import com.summer.itis.curatorapp.utils.Const.USER_KEY
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.activity_base.*
@@ -79,7 +80,7 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
         relativeTabs[TAB_THEMES] = SHOW_THEMES
         relativeTabs[TAB_WORKS] = SHOW_WORKS
 
-        bottom_navigation.selectedItemId = R.id.action_themes
+        bottom_navigation.selectedItemId = R.id.action_works
 
      /*   val args: Bundle = Bundle()
         val userJson = gsonConverter.toJson(AppHelper.currentCurator)
@@ -109,10 +110,10 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
                                 selectedTab(TAB_PROFILE)
                             }
 
-                           /* R.id.action_students -> {
+                            R.id.action_works -> {
 //                                loadFragment(StudentListFragment.newInstance(this@NavigationBaseActivity))
-                                selectedTab(TAB_STUDENTS)
-                            }*/
+                                selectedTab(TAB_WORKS)
+                            }
 
                             R.id.action_themes -> {
                                 selectedTab(TAB_THEMES)
@@ -268,7 +269,8 @@ class NavigationBaseActivity : BaseActivity<NavigationPresenter>(), NavigationVi
     }
 
     private fun showWorks(tabId: String) {
-
+        val fragment = WorkListFragment.newInstance(this)
+        pushFragments(tabId, fragment, true)
     }
 
     override fun hideBottomNavigation() {

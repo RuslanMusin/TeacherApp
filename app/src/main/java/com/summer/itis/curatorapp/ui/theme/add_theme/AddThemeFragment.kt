@@ -3,15 +3,18 @@ package com.summer.itis.curatorapp.ui.theme.add_theme
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.annotation.ArrayRes
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.google.gson.reflect.TypeToken
 import com.summer.itis.curatorapp.R
-import com.summer.itis.curatorapp.R.string.skills
 import com.summer.itis.curatorapp.model.skill.Skill
 import com.summer.itis.curatorapp.model.skill.Subject
 import com.summer.itis.curatorapp.model.theme.SuggestionTheme
@@ -22,7 +25,6 @@ import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
 import com.summer.itis.curatorapp.ui.student.search.choose_skill_main.ChooseSkillFragment
 import com.summer.itis.curatorapp.ui.student.search.edit_choose_skill.EditChooseLIstFragment
-import com.summer.itis.curatorapp.ui.student.search.search_filter.SearchFilterFragment
 import com.summer.itis.curatorapp.ui.student.search.search_filter.SearchFilterFragment.Companion.EDIT_CHOOSED_SKILLS
 import com.summer.itis.curatorapp.ui.student.student_list.StudentListFragment
 import com.summer.itis.curatorapp.ui.subject.add_subject.AddSubjectFragment
@@ -42,8 +44,9 @@ import com.summer.itis.curatorapp.utils.Const.TYPE
 import com.summer.itis.curatorapp.utils.Const.USER_KEY
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_add_theme.*
-import kotlinx.android.synthetic.main.toolbar_add_done.*
+import kotlinx.android.synthetic.main.toolbar_back_done.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.OnClickListener {
 
@@ -66,6 +69,10 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
     private var skills: MutableList<Skill> = ArrayList()
     private var listSkills: MutableList<String> = ArrayList()
 
+    private var imageViews: MutableList<ImageView> = ArrayList()
+    private var liViews: MutableList<LinearLayout> = ArrayList()
+
+    private lateinit var checkListener: View.OnClickListener
 
     companion object {
 
@@ -133,20 +140,19 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
         setToolbarData()
         setListeners()
 
-        spinner_student.setItems(getString(R.string.all_students_choosed))
+
+     /*   spinner_student.setItems(getString(R.string.all_students_choosed))
         spinner_student.setOnItemSelectedListener { view, position, id, item ->
             if(!item.equals(getString(R.string.all_students_choosed))) {
                 studentType = ONE_CHOOSED
             } else {
                 studentType = ALL_CHOOSED
             }
-        }
+        }*/
     }
 
     private fun setToolbarData() {
-        mainListener.setToolbar(toolbar_add_done)
-        btn_add.visibility = View.GONE
-        btn_ok.visibility = View.VISIBLE
+        mainListener.setToolbar(toolbar_back_done)
     }
 
     private fun setListeners() {
@@ -154,12 +160,30 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
         btn_create_questions.visibility = View.GONE*/
 
         btn_ok.setOnClickListener(this)
-        btn_add_subject.setOnClickListener(this)
-        btn_add_student.setOnClickListener(this)
+        tv_add_student.setOnClickListener(this)
+        iv_remove_student.setOnClickListener(this)
+        tv_add_subject.setOnClickListener(this)
         btn_back.setOnClickListener(this)
 
-        btn_add_skill.setOnClickListener(this)
-        li_edit_skills.setOnClickListener(this)
+        tv_add_skill.setOnClickListener(this)
+        li_added_skills.setOnClickListener(this)
+
+        checkListener = object: View.OnClickListener{
+            override fun onClick(v: View?) {
+                val ivRemove = v as ImageView
+                val index = imageViews.indexOf(ivRemove)
+                val liSkill = liViews[index]
+                li_added_skills.removeView(liSkill)
+                liViews.removeAt(index)
+                imageViews.removeAt(index)
+                skills.removeAt(index)
+//                textViews.removeAt(index)
+
+                if(liViews.size == 0) {
+                    tv_added_skills.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
     override fun onClick(v: View) {
@@ -167,7 +191,7 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
 
             R.id.btn_ok -> {
                 if(validateData()) {
-                    theme.id = "${Random(24000).nextInt()}"
+                    theme.id = "${Random().nextInt(24000)}"
                     theme.title = et_theme_name.text.toString()
                     theme.description = et_theme_desc.text.toString()
                     theme.curatorId = AppHelper.currentCurator.id
@@ -187,7 +211,7 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
                 }
             }
 
-            R.id.btn_add_subject -> {
+            R.id.tv_add_subject -> {
                 val fragment = AddSubjectFragment.newInstance(mainListener)
                 fragment.setTargetFragment(this, ADD_SUBJECT)
                 mainListener.showFragment(SHOW_THEMES, this, fragment)
@@ -196,17 +220,24 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
 
             }
 
-            R.id.btn_add_student -> {
+            R.id.tv_add_student -> {
                 val fragment = StudentListFragment.newInstance(mainListener)
                 fragment.setTargetFragment(this, ADD_SUBJECT)
                 mainListener.showFragment(SHOW_THEMES, this, fragment)
             }
 
+            R.id.iv_remove_student -> {
+                studentType = ALL_CHOOSED
+                tv_added_students.text = getString(R.string.all_students_choosed)
+                iv_remove_student.visibility = View.GONE
+
+            }
+
             R.id.btn_back -> backFragment()
 
-            R.id.btn_add_skill -> addSkill()
+            R.id.tv_add_skill -> addSkill()
 
-            R.id.li_edit_skills -> editSkills()
+//            R.id.li_added_skills -> editSkills()
         }
     }
 
@@ -247,16 +278,21 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
                     Log.d(TAG_LOG, "getResult")
                     data?.getStringExtra(SUBJECT_KEY)?.let {
                         subject = gsonConverter.fromJson(it, Subject::class.java)
+                        li_added_subject.visibility = View.VISIBLE
                         tv_added_subject.text = subject?.name
+                        tv_add_subject.text = getString(R.string.change_subject)
                     }
                 }
 
                 ADD_STUDENT -> {
                     data?.getStringExtra(USER_KEY)?.let {
                         student = gsonConverter.fromJson(it, Student::class.java)
+                        studentType = ONE_CHOOSED
 //                        tv_added_student.text = student?.getFullName()
-                        spinner_student.setItems(getString(R.string.all_students_choosed), student?.getFullName())
-                        spinner_student.selectedIndex = 1
+                       /* spinner_student.setItems(getString(R.string.all_students_choosed), student?.getFullName())
+                        spinner_student.selectedIndex = 1*/
+                        tv_added_students.text =  student?.getFullName()
+                        iv_remove_student.visibility = View.VISIBLE
                     }
                 }
 
@@ -265,9 +301,13 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
                         val skillJson = it.getStringExtra(SKILL_KEY)
                         val skill = gsonConverter.fromJson(skillJson, Skill::class.java)
                         skills.add(skill)
-                        val skillText = "${skill.name} ${getString(R.string.level)} ${skill.level}"
-                        listSkills.add(skillText)
-                        tv_added_skills.text = getListString(listSkills)
+//                        val skillText = "${skill.name}
+                        if(liViews.size == 0) {
+                            tv_added_skills.visibility = View.GONE
+                        }
+                        addSkillView(skill.name, skill.level)
+                     /*   listSkills.add(skillText)
+                        tv_added_skills.text = getListString(listSkills)*/
                     }
                 }
 
@@ -289,6 +329,21 @@ class AddThemeFragment : BaseFragment<AddThemePresenter>(), AddThemeView, View.O
                 }
             }
         }
+    }
+
+    private fun addSkillView(skill: String, level: String) {
+        val view: View = layoutInflater.inflate(R.layout.layout_item_tv_with_clear, li_added_skills,false)
+        val ivRemoveSkill: ImageView = view.findViewById(R.id.iv_remove_skill)
+        val tvAddedSkill: TextView = view.findViewById(R.id.tv_added_skill_name)
+        val tvAddedLevel: TextView = view.findViewById(R.id.tv_added_skill_level)
+
+        ivRemoveSkill.setOnClickListener(checkListener)
+        tvAddedSkill.text = skill
+        tvAddedLevel.text = getString(R.string.skill_level, level)
+        imageViews.add(ivRemoveSkill)
+        liViews.add(view as LinearLayout)
+
+        li_added_skills.addView(view)
     }
 
     private fun validateData(): Boolean{

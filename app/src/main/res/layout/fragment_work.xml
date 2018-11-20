@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    >
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <include layout="@layout/toolbar_back"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin.large"
+                android:layout_marginStart="@dimen/margin.large"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/li_top"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="@dimen/large_intrinsic_padding"
+                        android:paddingTop="@dimen/intrinsic_padding"
+                        android:text="@string/test_name"
+                        android:textColor="@color/primary_text"
+                        android:textSize="@dimen/text.20"
+                        android:textStyle="bold"
+                        />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/li_curator"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.normal"
+                            android:text="@string/curator"
+                            android:textColor="@color/primary_text"
+                            android:textSize="@dimen/text.16" />
+
+                        <TextView
+                            android:id="@+id/tv_curator"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.small"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="@dimen/text.14"
+                            tools:text="Authors" />
+
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_divider"/>
+
+                    <LinearLayout
+                        android:id="@+id/li_student"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.normal"
+                            android:text="@string/student_name"
+                            android:textColor="@color/primary_text"
+                            android:textSize="@dimen/text.16" />
+
+                        <TextView
+                            android:id="@+id/tv_student"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.small"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="@dimen/text.14"
+                            tools:text="Authors" />
+
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_divider"/>
+
+                    <LinearLayout
+                        android:id="@+id/li_subject"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.normal"
+                            android:text="@string/subject"
+                            android:textColor="@color/primary_text"
+                            android:textSize="@dimen/text.16" />
+
+                        <TextView
+                            android:id="@+id/tv_subject"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin.small"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="@dimen/text.14"
+                            tools:text="Authors" />
+
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_divider"/>
+
+                    <LinearLayout
+                        android:id="@+id/li_skills"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin.normal"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/work_progress"
+                            android:textColor="@color/primary_text"
+                            android:textSize="@dimen/text.16" />
+
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_divider"/>
+
+
+                    <LinearLayout
+                        android:id="@+id/li_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin.normal"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_desc_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/desc"
+                            android:textColor="@color/primary_text"
+                            android:textSize="@dimen/text.16" />
+
+                        <include layout="@layout/layout_expandable_text_view"/>
+
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_divider"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>

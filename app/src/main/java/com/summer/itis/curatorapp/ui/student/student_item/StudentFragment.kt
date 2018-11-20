@@ -12,12 +12,13 @@ import com.summer.itis.curatorapp.R
 import com.summer.itis.curatorapp.model.user.Student
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.SHOW_THEMES
+import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity.Companion.TAB_STUDENTS
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
 import com.summer.itis.curatorapp.ui.curator.curator_item.description.view.DescriptionFragment
 import com.summer.itis.curatorapp.ui.skill.skill_list.view.SkillListFragment
 import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemeFragment
 import com.summer.itis.curatorapp.ui.theme.add_theme.AddThemeFragment.Companion.ADD_STUDENT
-import com.summer.itis.curatorapp.ui.work.one_work_list.WorkListFragment
+import com.summer.itis.curatorapp.ui.work.one_work_list.OneWorkListFragment
 import com.summer.itis.curatorapp.utils.AppHelper
 import com.summer.itis.curatorapp.utils.Const
 import com.summer.itis.curatorapp.utils.Const.DESC_KEY
@@ -25,6 +26,7 @@ import com.summer.itis.curatorapp.utils.Const.MAX_LENGTH
 import com.summer.itis.curatorapp.utils.Const.REQUEST_CODE
 import com.summer.itis.curatorapp.utils.Const.SEND_THEME
 import com.summer.itis.curatorapp.utils.Const.STUDENT_TYPE
+import com.summer.itis.curatorapp.utils.Const.TAB_NAME
 import com.summer.itis.curatorapp.utils.Const.TYPE
 import com.summer.itis.curatorapp.utils.Const.USER_ID
 import com.summer.itis.curatorapp.utils.Const.USER_KEY
@@ -34,6 +36,7 @@ import kotlinx.android.synthetic.main.toolbar_add.*
 
 class StudentFragment : BaseFragment<StudentPresenter>(), StudentView, View.OnClickListener {
 
+    lateinit var tabName: String
     lateinit var user: Student
     override lateinit var mainListener: NavigationView
 
@@ -70,6 +73,7 @@ class StudentFragment : BaseFragment<StudentPresenter>(), StudentView, View.OnCl
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initViews()
         arguments?.let {
+            tabName = it.getString(TAB_NAME)
             val userJson = it.getString(USER_KEY)
             if(userJson == null) {
                 val id = it.getString(USER_ID)
@@ -160,9 +164,10 @@ class StudentFragment : BaseFragment<StudentPresenter>(), StudentView, View.OnCl
     }
 
     private fun showWorks() {
-        val fragment = WorkListFragment.newInstance(argUser(user, STUDENT_TYPE), mainListener)
+        val args = argUser(user, STUDENT_TYPE)
+        args.putString(TAB_NAME, tabName)
+        val fragment = OneWorkListFragment.newInstance(args, mainListener)
         mainListener.showFragment(SHOW_THEMES, this, fragment)
-
 //        mainListener.pushFragments(TAB_STUDENTS, fragment, true)
     }
 

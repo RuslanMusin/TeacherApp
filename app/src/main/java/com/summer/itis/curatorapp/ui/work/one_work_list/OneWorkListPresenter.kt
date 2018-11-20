@@ -9,7 +9,7 @@ import io.reactivex.functions.Action
 import io.reactivex.functions.Consumer
 
 @InjectViewState
-class WorkListPresenter(): BaseFragPresenter<WorkListView>() {
+class OneWorkListPresenter(): BaseFragPresenter<OneWorkListView>() {
 
     val compositeDisposable: CompositeDisposable = CompositeDisposable()
 

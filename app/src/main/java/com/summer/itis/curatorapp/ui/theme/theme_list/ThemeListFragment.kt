@@ -1,7 +1,5 @@
 package com.summer.itis.curatorapp.ui.theme.theme_list
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -9,29 +7,17 @@ import android.support.v4.view.ViewPager
 import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.*
-import android.widget.ProgressBar
-import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.curatorapp.R
-import com.summer.itis.curatorapp.R.string.skills
-import com.summer.itis.curatorapp.model.skill.Skill
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
-import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationBaseActivity
 import com.summer.itis.curatorapp.ui.base.navigation_base.NavigationView
-import com.summer.itis.curatorapp.ui.skill.skill_list.view.SkillListFragment
-import com.summer.itis.curatorapp.ui.theme.theme_list.tab_fragment.SearchRecyclerView
+import com.summer.itis.curatorapp.ui.base.base_custom.SearchListener
 import com.summer.itis.curatorapp.ui.theme.theme_list.tab_fragment.my_theme_list.MyThemeListFragment
 import com.summer.itis.curatorapp.ui.theme.theme_list.tab_fragment.suggestion_list.SuggestionListFragment
-import com.summer.itis.curatorapp.utils.Const.MY_LIST
-import com.summer.itis.curatorapp.utils.Const.MY_THEMES_LIST
-import com.summer.itis.curatorapp.utils.Const.OFFICIAL_LIST
-import com.summer.itis.curatorapp.utils.Const.ONLINE_STATUS
 import com.summer.itis.curatorapp.utils.Const.SUGGESTIONS_LIST
 import com.summer.itis.curatorapp.utils.Const.TAG_LOG
-import com.summer.itis.curatorapp.utils.Const.USER_LIST
 import com.summer.itis.curatorapp.widget.FragViewPagerAdapter
 import kotlinx.android.synthetic.main.fragment_theme_tabs.*
-import java.util.regex.Pattern
 
 class ThemeListFragment : BaseFragment<ThemeListPresenter>(), ThemeListView {
 
@@ -43,7 +29,7 @@ class ThemeListFragment : BaseFragment<ThemeListPresenter>(), ThemeListView {
     private var currentType: String? = null
 
     private var fragments: MutableList<Fragment> = ArrayList()
-    lateinit private var currentFragment: SearchRecyclerView
+    lateinit private var currentFragment: SearchListener
 
     companion object {
 
@@ -137,7 +123,7 @@ class ThemeListFragment : BaseFragment<ThemeListPresenter>(), ThemeListView {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
-//                presenter.loadOfficialTestsByQUery(query)
+//                presenterOne.loadOfficialTestsByQUery(query)
 
                 if (!finalSearchView.isIconified) {
                     finalSearchView.isIconified = true
@@ -148,7 +134,7 @@ class ThemeListFragment : BaseFragment<ThemeListPresenter>(), ThemeListView {
 
             override fun onQueryTextChange(newText: String): Boolean {
                 val pos = viewpager.currentItem
-                currentFragment = fragments[pos] as SearchRecyclerView
+                currentFragment = fragments[pos] as SearchListener
                 currentFragment.findByQuery(newText)
                 return false
             }
@@ -166,7 +152,7 @@ class ThemeListFragment : BaseFragment<ThemeListPresenter>(), ThemeListView {
    /* private fun findFromList(query: String) {
         val pattern: Pattern = Pattern.compile("${query.toLowerCase()}.*")
         val list: MutableList<Skill> = java.util.ArrayList()
-        for(skill in skills) {
+        for(skill in works) {
             if(pattern.matcher(skill.name.toLowerCase()).matches()) {
                 list.add(skill)
             }

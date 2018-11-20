@@ -32,7 +32,10 @@ class EditThemePresenter(): BaseFragPresenter<EditThemeView>() {
                 val suggestionIterator = AppHelper.currentCurator.suggestions.iterator()
                 for(suggestion  in suggestionIterator) {
                     if(suggestion.theme?.id.equals(themeNew.id)) {
-                        suggestionIterator.remove()
+                        suggestion.theme = themeNew
+                        suggestion.themeProgress?.title = themeNew.title
+                        suggestion.themeProgress?.description = themeNew.description
+                        suggestion.themeProgress?.skills = themeNew.skills
                     }
                 }
                 viewState.saveCuratorState()

@@ -7,9 +7,13 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.curatorapp.R
+import com.summer.itis.curatorapp.R.string.level
+import com.summer.itis.curatorapp.model.skill.Skill
 import com.summer.itis.curatorapp.model.theme.Theme
 import com.summer.itis.curatorapp.model.user.Student
 import com.summer.itis.curatorapp.ui.base.base_first.fragment.BaseFragment
@@ -27,6 +31,7 @@ import com.summer.itis.curatorapp.utils.Const.EDIT_SUGGESTION
 import com.summer.itis.curatorapp.utils.Const.ID_KEY
 import com.summer.itis.curatorapp.utils.Const.REQUEST_CODE
 import com.summer.itis.curatorapp.utils.Const.SEND_THEME
+import com.summer.itis.curatorapp.utils.Const.TAB_NAME
 import com.summer.itis.curatorapp.utils.Const.THEME_KEY
 import com.summer.itis.curatorapp.utils.Const.THEME_TYPE
 import com.summer.itis.curatorapp.utils.Const.TYPE
@@ -34,9 +39,12 @@ import com.summer.itis.curatorapp.utils.Const.USER_ID
 import com.summer.itis.curatorapp.utils.Const.USER_KEY
 import com.summer.itis.curatorapp.utils.Const.gsonConverter
 import com.summer.itis.curatorapp.utils.SkillViewHelper
+import kotlinx.android.synthetic.main.layout_expandable.*
 import kotlinx.android.synthetic.main.layout_expandable_text_view.*
+import kotlinx.android.synthetic.main.layout_item_skill.*
 import kotlinx.android.synthetic.main.layout_theme.*
 import kotlinx.android.synthetic.main.toolbar_back_add_edit.*
+import java.util.*
 
 class ThemeFragment : BaseFragment<ThemePresenter>(), ThemeView, View.OnClickListener {
 
@@ -94,16 +102,26 @@ class ThemeFragment : BaseFragment<ThemePresenter>(), ThemeView, View.OnClickLis
     }
 
     private fun setListeners() {
-        btn_edit.setOnClickListener(this)
+        if(theme.dateAcceptance?.time != null) {
+            btn_edit.visibility = View.GONE
+            btn_add.visibility = View.GONE
+        } else {
+            btn_edit.setOnClickListener(this)
+            btn_add.setOnClickListener(this)
+        }
         btn_back.setOnClickListener(this)
-        btn_add.setOnClickListener(this)
+        li_skills.setOnClickListener(this)
     }
 
     private fun setData() {
         if(theme.skills.size == 0) {
             li_skills.visibility = View.GONE
         } else {
-            tv_skills.text = this.activity?.let { SkillViewHelper.getSkillsText(theme.skills, it) }
+            for(skill in theme.skills) {
+                addSkillView(skill)
+            }
+
+//            tv_content.text = this.activity?.let { SkillViewHelper.getSkillsText(theme.skills, it) }
         }
         tv_title.text = theme.title
         tv_curator.text = theme.curator?.getFullName()
@@ -129,7 +147,28 @@ class ThemeFragment : BaseFragment<ThemePresenter>(), ThemeView, View.OnClickLis
             R.id.li_student -> showStudent()
 
             R.id.li_desc -> showDesc()
+
+            R.id.li_skills -> {
+                expandable_layout.toggle()
+                val divider = li_skills.findViewById<View>(R.id.divider)
+                if(expandable_layout.isExpanded) {
+                    divider.visibility = View.GONE
+                } else {
+                    divider.visibility = View.VISIBLE
+                }
+            }
         }
+    }
+
+    private fun addSkillView(skill: Skill) {
+        val view: View = layoutInflater.inflate(R.layout.layout_item_skill, li_added_skills,false)
+        val tvAddedSkill: TextView = view.findViewById(R.id.tv_added_skill_name)
+        val tvAddedLevel: TextView = view.findViewById(R.id.tv_added_skill_level)
+
+        tvAddedSkill.text = skill.name
+        tvAddedLevel.text = getString(R.string.skill_level, skill.level)
+
+        li_added_skills.addView(view)
     }
 
     private fun sendToStudent() {
@@ -167,7 +206,7 @@ class ThemeFragment : BaseFragment<ThemePresenter>(), ThemeView, View.OnClickLis
         this.activity?.let {
             MaterialDialog.Builder(it)
                     .title(R.string.should_edit_theme)
-                    .content(R.string.theme_suggestions_will_be_deleted)
+                    .content(R.string.theme_suggestions_will_be_changed)
                     .positiveText(R.string.agree)
                     .negativeText(R.string.cancel)
                     .onNegative { dialog, which ->
@@ -189,6 +228,7 @@ class ThemeFragment : BaseFragment<ThemePresenter>(), ThemeView, View.OnClickLis
     private fun showStudent() {
         val args = Bundle()
         args.putString(USER_ID, theme.studentId)
+        args.putString(TAB_NAME, TAB_THEMES)
         val fragment = StudentFragment.newInstance(args, mainListener)
         mainListener.pushFragments(TAB_THEMES, fragment, true)
     }
@@ -208,7 +248,11 @@ class ThemeFragment : BaseFragment<ThemePresenter>(), ThemeView, View.OnClickLis
 
                         if(theme.skills.size != 0) {
                             li_skills.visibility = View.VISIBLE
-                            tv_skills.text = this.activity?.let { it1 -> SkillViewHelper.getSkillsText(theme.skills, it1) }
+                            expandable_layout.collapse()
+                            li_added_skills.removeAllViewsInLayout()
+                            for(skill in theme.skills) {
+                                addSkillView(skill)
+                            }
                         } else {
                             li_skills.visibility = View.GONE
                         }

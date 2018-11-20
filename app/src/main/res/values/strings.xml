@@ -322,6 +322,7 @@
     <string name="theme_name">Название темы</string>
     <string name="save_changes">Сохранить изменения</string>
     <string name="level">Уровень: </string>
+    <string name="skill_level">Уровень: %1$s</string>
     <string name="high_level">Высокий</string>
     <string name="medium_level">Средний</string>
     <string name="low_level">Низкий</string>
@@ -336,6 +337,8 @@
     <string name="suggestions">Предложения</string>
     <string name="my_themes">Мои темы</string>
     <string name="theme">Тема</string>
+    <string name="past_works">Все</string>
+    <string name="my_works">Мои</string>
 
     <string name="theme_accepted">Принята</string>
     <string name="theme_rejected">Отклонена</string>
@@ -359,10 +362,34 @@
     <string name="change_suggestion">Изменение предложения</string>
     <string name="should_send_theme">Хотите предложить тему?</string>
     <string name="send_theme_content">При нажатии на OK вам нужно будет выбрать студента, которому вы хотите предложить этут тему</string>
-    <string name="theme_suggestions_will_be_deleted">После редактирования темы все прошлые предложеия по ней будут удалены</string>
+    <string name="theme_suggestions_will_be_changed">После редактирования темы все прошлые предложеия по ней будут изменены</string>
     <string name="should_edit_theme">Хотите внести изменения ?</string>
     <string name="changes_updated">Изменения успешно сохранены</string>
     <string name="suggestion_was_sended">Предложение было отправлено</string>
+    <string name="work_name">Название курсовой</string>
+    <string name="work">Курсовая</string>
+    <string name="work_progress">Карта прогресса</string>
+    <string name="change_subject">Изменить предмет</string>
+    <string name="_should_user_fake_choose_theme">Хотите чтобы студент выбрал тему ?</string>
+    <string name="_should_user_fake_action_be_choosed">Выберите за студента действие</string>
+    <string name="student_fake_theme">Предложение студента</string>
+    <string name="should_user_send_fake_theme">Хотите чтобы студент отправил предложение по схожей теме ?</string>
+    <string name="send_changes">Отправить изменения</string>
+
+    <string name="waiting_curator">Ожидание куратора</string>
+    <string name="waiting_student">Ожидание студента</string>
+    <string name="in_progress_curator">Доработка предложения куратором</string>
+    <string name="in_progress_student">Доработка предложения студентом</string>
+    <string name="changed_curator">Изменено куратором</string>
+    <string name="changed_student">Изменено студентом</string>
+    <string name="accepted_both">Предложение принято</string>
+    <string name="rejected_curator">Отклонено куратором</string>
+    <string name="rejected_student">Отклонено студентом</string>
+
+
+
+
+
 
     <string-array name="courses">
         <item>1 курс</item>
@@ -375,5 +402,11 @@
         <item>Низкий</item>
         <item>Средний</item>
         <item>Высокий</item>
+    </string-array>
+
+    <string-array name="fake_students">
+        <item>Ruslan Musin</item>
+        <item>Valery Petrov</item>
+        <item>Rinat Muhametzyanov</item>
     </string-array>
 </resources>

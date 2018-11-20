@@ -15,11 +15,11 @@ class SkillViewHelper {
             for ((i, item) in list.withIndex()) {
                 listString += item
                 if (i != list.lastIndex) {
-                    listString += " , "
+                    listString += "\n"
                 }
 
             }
-            listString.removeSuffix(",")
+//            listString.removeSuffix(",")
             return listString
         }
 

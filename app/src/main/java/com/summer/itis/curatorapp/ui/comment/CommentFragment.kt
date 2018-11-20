@@ -36,7 +36,7 @@ abstract class CommentFragment<Presenter: CommentPresenter<*>>: BaseFragment<Pre
         super.onViewCreated(view, savedInstanceState)
         initCommentRecycler()
         setCommentListeners()
-//        presenter.repository = repository
+//        presenterOne.repository = repository
     }
 
     override fun setCommentListeners() {

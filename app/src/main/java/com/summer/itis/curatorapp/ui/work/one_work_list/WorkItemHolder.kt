@@ -7,22 +7,22 @@ import android.view.ViewGroup
 
 
 import com.summer.itis.curatorapp.R
-import com.summer.itis.curatorapp.model.skill.Skill
 import com.summer.itis.curatorapp.model.work.Work
-import kotlinx.android.synthetic.main.activity_login.view.*
+import kotlinx.android.synthetic.main.item_work.view.*
 
 
 class WorkItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(item: Work) {
-        itemView.tv_name.text = item.name
+        itemView.tv_work.text = item.theme.title
+        itemView.tv_subject.text = item.theme.subject.name
     }
 
 
     companion object {
 
         fun create(parent: ViewGroup): WorkItemHolder {
-            val view =  LayoutInflater.from(parent.context).inflate(R.layout.item_text, parent, false);
+            val view =  LayoutInflater.from(parent.context).inflate(R.layout.item_work, parent, false);
             val holder = WorkItemHolder(view)
             return holder
         }

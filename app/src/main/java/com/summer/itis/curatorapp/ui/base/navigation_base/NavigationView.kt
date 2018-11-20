@@ -22,5 +22,4 @@ interface NavigationView: BaseActView {
     fun showBottomNavigation()
 
     fun changeWindowsSoftInputMode(mode: Int)
-
 }
